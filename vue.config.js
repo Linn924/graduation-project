@@ -8,5 +8,13 @@ module.exports = {
           'axios': 'axios',
           'element-ui': 'ELEMENT'
         })
-    }
+    },
+    devServer: {
+      proxy: {
+        '/api': {
+          target: 'https://aip.baidubce.com',
+          changeOrigin: true
+        }
+      }
+    },
 }
