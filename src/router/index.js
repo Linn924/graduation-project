@@ -2,12 +2,14 @@ const NotFound = () => import(/* webpackChunkName: "NotFound" */'../components/N
 const HomePage = () => import(/* webpackChunkName: "HomePage" */'../components/HomePage.vue')
 const ArticleListPage = () => import(/* webpackChunkName: "ArticleListPage" */'../components/blog/ArticleListPage.vue')
 const ArticlePage = () => import(/* webpackChunkName: "ArticlePage" */'../components/blog/ArticlePage.vue')
+const Logon = () => import(/* webpackChunkName: "Logon" */'../components/Logon.vue')
+const Register = () => import(/* webpackChunkName: "Register" */'../components/Register.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
   { path: '*', component: NotFound },
-  { path:'/', redirect: '/homepage' },
+  { path:'/', redirect: '/logon' },
   { path: '/homepage', 
     redirect: '/homepage/articlelistpage', 
     component: HomePage,
@@ -15,7 +17,9 @@ const routes = [
       { path:'/homepage/articlelistpage', component:ArticleListPage},
       { path:'/homepage/articlepage', component:ArticlePage},
     ]
-  }
+  },
+  { path:'/logon', component:Logon },
+  { path:'/register', component:Register },
 ]
 
 const router = new VueRouter({

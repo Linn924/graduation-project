@@ -2,8 +2,7 @@
     <div class="homepage">
         <el-button @click="loginDialog = true" type="primary">账号密码登录</el-button>
         <el-button @click="registerDialog = true">账号密码注册</el-button>
-        <el-button type="primary" @click="registerFace">人脸识别登录</el-button>
-        <el-button>人脸识别注册</el-button>
+        
 
         <!-- 登录对话框 -->
         <el-dialog title="LOGIN" :visible.sync="loginDialog" width="30%" center>
@@ -48,8 +47,6 @@
             </span>
         </el-dialog>
 
-        <video id="video"></video>
-        <canvas id="canvas" style="display:none"></canvas>
     </div>
 </template>
 
@@ -122,17 +119,7 @@ export default {
         }
     },
     methods:{
-        //登录
-        async login(){
-            this.$refs.loginFormRef.validate( async valid => {
-                if(!valid) return
-                const {data:res} = await this.axios.post('login',this.loginForm)
-                if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
-                this.$message({message: `${res.tips}`,type: 'success',duration:1000})
-                this.$refs.loginFormRef.resetFields()
-                this.loginDialog = false
-            })
-        },
+        
         //检查昵称是否可用
         checkUname(){
             clearTimeout(this.timer)
@@ -168,65 +155,8 @@ export default {
             this.registerForm.username = ''
             this.isSuccess = true
         },
-        // getUserMediaToPhoto(constraints,success,error){
-        //     if(navigator.mediaDevices.getUserMedia){
-        //         //最新标准API
-        //         navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error)
-        //     }else if (navigator.webkitGetUserMedia) {
-        //         //webkit核心浏览器
-        //         navigator.webkitGetUserMedia(constraints,success,error)
-        //     }else if(navigator.mozGetUserMedia){
-        //         //firefox浏览器
-        //         navigator.mozGetUserMedia(constraints,success,error)
-        //     }else if(navigator.getUserMedia){
-        //         //旧版API
-        //         navigator.getUserMedia(constraints,success,error)
-        //     }
-        // },
-        // getFace() {
-        //     let video = document.getElementById('video')
-        //     let canvas = document.getElementById('canvas')
-        //     let context = canvas.getContext('2d')
-        //     context.drawImage(video,0,0,480,320)
-        //     let img=canvas.toDataURL('image/jpg')
-        //     this.image=img.split(',')[1]
-        // },
-        // openUserMedia() {
-        //     let video = document.getElementById('video')
-        //     if(navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.getUserMedia){
-        //         this.getUserMediaToPhoto({video:{width:480,height:320}},this.success,this.error)
-        //     }else{
-        //         alert('你的浏览器不支持访问用户媒体设备')
-        //     }
-        // },
-        // offUserMedia() {
-        //     if(this.mediaStreamTrack!=null)
-        //     this.mediaStreamTrack.getTracks()[0].stop()
-        // },
-        // success(stream){
-        //     let video = document.getElementById('video')
-        //     this.mediaStreamTrack = stream
-        //     try {
-        //        video.srcObject=stream
-        //     }catch (e) {
-        //         console.log("访问用户媒体设备失败")
-        //     }
-        //     video.play()
-        //     this.getFace()
-        // },
-        // error(){
-        //     console.log('访问用户媒体失败')
-        // },
-        async registerFace(){
-            let imageForm = {
-                image:'027d8308a2ec665acb1bdf63e513bcb9',
-                image_type:'FACE_TOKEN',
-                group_id:'1',
-                user_id:'simon'
-            }
-            const data = await this.axios.post('/api/rest/2.0/face/v3/faceset/user/add?access_token=24.1d63aaf10303338f16a04672f052c4b3.2592000.1609588862.282335-23089520',imageForm)
-            console.log(data)
-        }
+        
+        
     }
 }
 </script>
