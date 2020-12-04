@@ -160,7 +160,7 @@ export default {
 <style lang="less" scoped>
 .register{
     height: 100vh;
-    background: url(https://s1.ax1x.com/2020/10/03/03o2VJ.jpg) no-repeat center center;
+    background: url(https://s3.ax1x.com/2020/12/04/DqiyWD.jpg) no-repeat center center;
     .mask{
         height: 100%;
         background-image: radial-gradient(rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 100%),radial-gradient(rgba(0,0,0,0) 33%,rgba(0,0,0,0.3) 166%);
@@ -190,7 +190,7 @@ main{
     .main-right{
         width: 480px;
         height: 620px;
-        background-color:rgba(255,255,255,.8);
+        background-color:rgba(255,255,255,.5);
         border-radius: 15px;
         box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
         box-sizing: border-box;
@@ -246,7 +246,7 @@ main{
             margin-top: 30px;
             font-size: 12px;
             line-height: 2;
-            color: #AAAAAA;
+            color: rgba(0, 0, 0);
         }
     }
     .face-form{
@@ -273,7 +273,7 @@ main{
             margin-top: 20px;
             font-size: 12px;
             line-height: 2;
-            color: #AAAAAA;
+            color: rgba(0, 0, 0);
         }
     }
 }
@@ -288,14 +288,14 @@ main{
 }
 .line-special-left{
     position: absolute;
-    top: 64px;
+    top: 66px;
     left: 0;
     width: 200px;
     border: 1px solid #2468F2;
 }
 .line-special-right{
     position: absolute;
-    top: 64px;
+    top: 66px;
     left: 200px;
     width: 200px;
     border: 1px solid #2468F2;

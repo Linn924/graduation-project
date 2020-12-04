@@ -2,9 +2,8 @@
     <div class="logon">
         <header></header>
         <main>
-            <div class="main-left"></div>
-            <!-- 右侧关于登录的部分 -->
-            <div class="main-right">
+            <!-- 左侧关于登录的部分 -->
+            <div class="main-left">
                 <div class="logon-form">
                     <div class="title">
                         <span @click="accountLogon" :style="{color:accountForm?'#2468F2':'#000'}">账号登录</span>
@@ -32,9 +31,9 @@
                             <div class="account-end">
                                 <router-link to="/register">注册</router-link>
                                 <span>|</span>
-                                <router-link to="/register">忘记密码</router-link>
+                                <router-link to="/findpwd">忘记密码</router-link>
                                 <span>|</span>
-                                <router-link to="/register">游客浏览</router-link>
+                                <router-link to="/home">游客浏览</router-link>
                             </div>
                             <p class="account-tips">温馨提示：<br/>只有登录才能使用一些有权限的功能哦!</p>
                         </div>
@@ -46,6 +45,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- 右侧修饰部分 -->
+            <div class="main-right">
             </div>
         </main>
         <footer></footer>
@@ -82,7 +84,7 @@ export default {
                 const {data:res} = await this.axios.post('login',this.loginForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000})
-                this.$router.push('/homepage/articlelistpage')
+                this.$router.push('/home')
             })
         },
         //账号登录
@@ -106,7 +108,7 @@ export default {
     font-family: "Microsoft Yahei", "Hiragino Sans GB", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-repeat: repeat-y;
     background-size: 30% 100%;
-    background-position: 100% 0;
+    background-position: 0 0;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAABCAYAAABkOJMpAAAAAXNSR0IArs4c6QAAABpJREFUOBFjVMn49J9hFIyGwGgIjIbAEAgBAK6uAn+8Yc3TAAAAAElFTkSuQmCC);
     header,footer{
         padding: 70px 0;
@@ -116,21 +118,22 @@ export default {
     }
     main{
         width: 1200px;
+        border-radius: 5px;
         margin: 0 auto;
         display: flex;
         justify-content: space-between;
+        background:url(https://s3.ax1x.com/2020/12/04/DqicSe.jpg) no-repeat center center;
     }
     
 }
 main{
-    .main-right{
+    .main-left{
         width: 420px;
         height: 492px;
         background-color:#FFFFFF;
-        border-radius: 5px;
+        border-radius: 5px 0 0 5px;
         box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
         box-sizing: border-box;
-        margin-right: 8px;
         padding: 50px;
         .logon-form{
             width: 100%;
@@ -148,6 +151,8 @@ main{
             }
         }
         
+    }
+    .main-right{
     }
 }
 .line-special-left{
@@ -191,7 +196,7 @@ main{
                 cursor: pointer;
                 &:hover{color: #2468F2;}
             }
-            span:nth-child(2n){color: #EBEBEB;}   
+            span:nth-child(2n){color: #EBEBEB;font-size: 12px;}   
         }
         .account-tips{
             margin-top: 30px;

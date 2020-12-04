@@ -1,25 +1,27 @@
 const NotFound = () => import(/* webpackChunkName: "NotFound" */'../components/NotFound.vue')
-const HomePage = () => import(/* webpackChunkName: "HomePage" */'../components/HomePage.vue')
-const ArticleListPage = () => import(/* webpackChunkName: "ArticleListPage" */'../components/blog/ArticleListPage.vue')
-const ArticlePage = () => import(/* webpackChunkName: "ArticlePage" */'../components/blog/ArticlePage.vue')
+const Home = () => import(/* webpackChunkName: "Home" */'../components/Home.vue')
+const ArticleList = () => import(/* webpackChunkName: "ArticleList" */'../components/blog/ArticleList.vue')
+const Article = () => import(/* webpackChunkName: "Article" */'../components/blog/Article.vue')
 const Logon = () => import(/* webpackChunkName: "Logon" */'../components/Logon.vue')
 const Register = () => import(/* webpackChunkName: "Register" */'../components/Register.vue')
+const FindPwd = () => import(/* webpackChunkName: "FindPwd" */'../components/FindPwd.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
   { path: '*', component: NotFound },
-  { path:'/', redirect: '/logon' },
-  { path: '/homepage', 
-    redirect: '/homepage/articlelistpage', 
-    component: HomePage,
+  { path:'/', redirect: '/findpwd' },
+  { path: '/home', 
+    redirect: '/home/articlelist', 
+    component: Home,
     children:[
-      { path:'/homepage/articlelistpage', component:ArticleListPage},
-      { path:'/homepage/articlepage', component:ArticlePage},
+      { path:'/home/articlelist', component:ArticleList},
+      { path:'/home/article', component:Article},
     ]
   },
   { path:'/logon', component:Logon },
   { path:'/register', component:Register },
+  { path:'/findpwd', component:FindPwd },
 ]
 
 const router = new VueRouter({
