@@ -1,6 +1,6 @@
 <template>
     <div class="register">
-         <!-- 遮罩 -->
+        <!-- 遮罩 -->
         <div class="mask"></div>
         <!-- 主体内容 -->
         <section>
@@ -43,14 +43,14 @@
                                     <div class="account-end">
                                         已有账号？<router-link to="/logon">登录</router-link>
                                     </div>
-                                    <p class="account-tips">温馨提示：<br/>请按照规定注册账号哦!</p>
+                                    <p class="account-tips">温馨提示：请按照规定注册账号哦!</p>
                                 </div>
                             </div>
                             <!-- 人脸注册表单 -->
                             <div class="face-form" v-show="faceForm">
                                 <div class="distinguish-box"></div>
                                 <button>开启摄像头</button>
-                                <p class="face-tips">温馨提示：<br/>只有打开摄像头才能注册哦!</p>
+                                <p class="face-tips">温馨提示：只有打开摄像头才能注册哦!</p>
                             </div>
                         </div>
                     </div>
