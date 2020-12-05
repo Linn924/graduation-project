@@ -1,6 +1,6 @@
 <template>
-    <div class="home">
-        首页
+    <div>
+        个人中心
     </div>
 </template>
 
@@ -10,11 +10,6 @@ export default {
         return {
             
         }
-    },
-    created(){
-    },
-    methods:{
-        
     }
 }
 </script>

@@ -4,8 +4,12 @@ import store from './store'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import './assets/css/global.css'
+import './assets/css/atom-one-dark.css'
+import './assets/js/clickLove'
+import './assets/js/ribbon'
 
 axios.defaults.baseURL='http://127.0.0.1:8888/'
+
 axios.interceptors.request.use(config => {
   NProgress.start()
   // config.headers.Authorization = window.sessionStorage.getItem('token')
@@ -24,6 +28,14 @@ const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
 }
+
+//代码高亮
+Vue.directive('highlight', el => {
+  let blocks = el.querySelectorAll('pre code')
+  blocks.forEach((block) => {
+    hljs.highlightBlock(block)
+  })
+})
 
 //处理时间格式的过滤器
 Vue.filter('date', function (originVal) {

@@ -33,7 +33,7 @@
                                 <span>|</span>
                                 <router-link to="/resetpwd">忘记密码</router-link>
                                 <span>|</span>
-                                <router-link to="/home">游客浏览</router-link>
+                                <router-link to="/blog">游客浏览</router-link>
                             </div>
                             <p class="account-tips">温馨提示：<br/>只有登录才能使用一些有权限的功能哦!</p>
                         </div>
@@ -66,8 +66,8 @@ export default {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
             loginForm:{//登录表单数据
-                username:'',
-                password:''
+                username:'simon',
+                password:'123456'
             },
             loginRules:{//登录表单验证规则
                 username:[
@@ -88,8 +88,10 @@ export default {
                 if(!valid) return this.$message({message: '请输入用户名密码登录',type: 'error',duration:1000})
                 const {data:res} = await this.axios.post('login',this.loginForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
-                this.$message({message: `${res.tips}`,type: 'success',duration:1000})
-                this.$router.push('/home')
+                this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:5})
+                window.sessionStorage.setItem('username',res.username)
+                window.sessionStorage.setItem('token',res.token)
+                this.$router.push('/blog')
             })
         },
         //账号登录
