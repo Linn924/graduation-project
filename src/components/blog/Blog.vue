@@ -1,69 +1,13 @@
 <template>
     <div id="blog">
 
-        <!-- 回到顶部 写在顶部-->
+        <!-- 回到顶部-->
         <el-backtop><i class="el-icon-caret-top"></i></el-backtop>
-
-        <!-- 头部导航 -->
-        <header>
-            <section>
-                <a href="javascript:void(0);">
-                    <img src="https://s3.ax1x.com/2020/12/02/D5a7qK.jpg" alt="">
-                    <span>Simon</span>
-                </a>
-                <nav>
-                    <li>
-                        <router-link to="/blog/articlelist" 
-                            @click.native="isSearch?getBlogAgain():''">
-                            <i class="el-icon-s-home"></i>
-                            <span>主页</span>
-                        </router-link>
-                    </li>
-                    <!-- <li>
-                        <router-link to="/me">
-                            <i class="el-icon-user-solid"></i>
-                            <span>关于我</span>
-                        </router-link>
-                    </li> -->
-                </nav>
-                <div class="not-logon" v-show="!status">
-                    <span>未登录，请</span>
-                    <router-link to="/logon">登录</router-link>
-                </div>
-                <div class="logon" v-show="status">
-                    <span>欢迎您，</span>
-                    <span @mouseenter="personBoxShow=true">
-                        {{username}}
-                    </span>
-                </div>
-            </section>
-            <section>
-                <img src="https://s3.ax1x.com/2020/12/02/D5a7qK.jpg" alt="">
-                <div class="icon">
-                    <i class="el-icon-search" @click="searchBox = true"></i>
-                    <el-dropdown placement="bottom-start" trigger="click">
-                        <span class="el-dropdown-link">
-                            <i class="el-icon-s-operation"></i>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
-                                <router-link to="/content" 
-                                    @click.native="isSearch?getBlogAgain():''">
-                                    <i class="el-icon-s-home" style="color:#000"></i>
-                                    <span style="color:#000">home</span>
-                                </router-link>
-                            </el-dropdown-item>
-                            <el-dropdown-item>
-                                <router-link to="/me">
-                                    <i class="el-icon-user-solid" style="color:#000"></i>
-                                    <span style="color:#000">About</span>
-                                </router-link>
-                            </el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-            </section>
-        </header>
+        
+        <!-- 头部 -->
+        <Header :getBlogAgain="getBlogAgain" :isSearch="isSearch" 
+                :searchBox="searchBox">
+        </Header>
 
         <!-- 内容区域 -->
         <main>
@@ -150,64 +94,37 @@
             </section>
         </main>
         
-        <!-- 底部区域 -->
-        <footer>         
-            <section>
-                <p>© 2020 - 2021 Simon 版权所有</p>
-                <p>苏ICP备20023864号</p>
-            </section>
-        </footer>
-        
-        <!-- 搜索框对话盒子(手机模式) -->
-        <el-dialog :visible.sync="searchBox" title="搜索框" width="200px">
-            <el-input size="small" placeholder="回车搜索" clearable
-                v-model="value" @keyup.enter.native="enter" suffix-icon="el-icon-search">
-            </el-input>
-        </el-dialog>
-
-        <div class="person-box" @mouseenter="personBoxShow=true" 
-            @mouseleave="personBoxShow=false" v-show="personBoxShow">
-            <div class="person-center">
-                <router-link to="/personalcenter">个人中心</router-link>
-            </div>
-            <div class="logout" @click="logout">
-                <span>登出</span>
-            </div>
-        </div>
-
+        <!-- 底部 -->
+        <Footer></Footer>        
     </div>
 </template>
 
 <script>
+import Header from '../Header.vue'
+import Footer from '../Footer.vue'
 export default {
     inject:['reload'],//注入reload(重载)方法
+    components:{
+        Header,//头部组件
+        Footer,//底部组件
+    },
     data(){
         return {
-            username:'', //用户登录名称         
-            status:false,//登录状态,未登录  
-            personBoxShow:false,//个人中心盒子隐藏 
             blogList:[],
             total:0,
             sortCount:0,//分类总数
             sortList:[],//分类数据
             value:'',//搜索框数据
             isSearch:false,//是否点击了搜索
-            searchBox:false,//是否显示搜索盒子(在手机模式下)
         }
     },
     created() {
         this.getSTData()
         this.getBlogAllData()
-        this.getUname()
          //禁止鼠标右键点击
         document.oncontextmenu =  () => {event.returnValue = false}
     },
     methods: {
-         //获取登录名称
-        getUname(){
-            this.username = sessionStorage.getItem('username')
-            this.status = sessionStorage.getItem('username') !== null ? true : false
-        },
         //获取博客最近文章
         async getBlogAllData(){
             const {data:res} = await this.axios.get('blogAllData')
@@ -221,7 +138,6 @@ export default {
             this.$refs.article.getBlogData()
             this.value = ''
             this.isSearch = true
-            this.searchBox = false
         },
         //获取分类与标签数据
         async getSTData(){
@@ -242,31 +158,17 @@ export default {
         getBlogAgain(){
             this.$refs.article.getBlogData()
             this.isSearch = false
-        },
-        //登出
-        logout(){
-            window.sessionStorage.clear()
-            this.reload()
         }
     }
 }
 </script>
 
 <style lang="less" scoped>
-@import '../../assets/css/blog.css';
 #blog{
     width: 100vw;
     min-width: 375px;
     min-height: 100vh;
     position: relative;
-    >header{
-        min-height: 60px;
-        background-color: #fff;
-        box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
     >main{
         padding: 2vh 0 5vh 0;
         >section{
@@ -279,95 +181,11 @@ export default {
             gap: 20px;
         }
     }
-    >footer{
-        box-sizing: border-box;
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
     .el-backtop{
         bottom: 20px!important;
         background-color: rgba(255, 255, 255, 0.5);
         border-radius: 5px;
-        color:#1e90ff;
-    }
-}
-#blog>header{
-    section:first-child{
-        width: 80vw;
-        display: grid;
-        grid-template-columns:140px 1fr 130px;
-        grid-template-rows: 1fr;
-        margin: 0 auto;
-        >a{
-            display: flex;
-            align-items: center;
-            margin-right: 2vw;
-            &:hover span{color: #1E90FF;}
-            img{
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                margin-right: 20px;
-            }
-            span{
-                color: #000;
-                font-size: 20px;
-                transition: color .25s; 
-            }
-        }
-        nav{
-            display: flex;
-            list-style: none;
-            line-height: 60px;
-            li{
-                margin-right: 20px;
-                a{
-                    color: #000;
-                    transition: color .5s;
-                    &:hover{color: #1E90FF!important;}
-                    font-size: 15px;
-                    >i{margin-right: 2px;}
-                }
-                
-            }
-        }
-        .not-logon{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            a{color: #2468F2!important;}
-        }
-        .logon{
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            span:last-child{
-                color: #2468F2;
-                cursor: pointer;
-            }
-        }
-    }
-    section:last-child{
-        width: 80vw;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        img{
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 20px;
-        }
-        .icon i{
-            font-size: 20px;
-            cursor: pointer;
-            transition: all .25s;
-            &:first-child{margin-right: 20px;}
-            &:hover{color: #1E90FF;}
-        }
+        color:#2468F2;
     }
 }
 #blog>main{
@@ -440,7 +258,7 @@ export default {
             box-sizing: border-box;
             padding: 10px 10px;
             span>i{margin-right: 5px;}
-            .line{border: 1px solid #70A1FF;margin: 10px 0;}
+            .line{border: 1px solid #2468F2;margin: 10px 0;}
         }
         .sort{
             min-height: 160px;
@@ -452,7 +270,7 @@ export default {
             padding: 10px 10px;
             transition: all .5s;
             span>i{margin-right: 5px;}
-            .line{border: 1px solid #70A1FF;margin: 10px 0;}
+            .line{border: 1px solid #2468F2;margin: 10px 0;}
             section{
                 display: grid;
                 place-content: center center;
@@ -483,7 +301,7 @@ export default {
             margin: 10px 0;
             transition: all .5s;
             span>i{margin-right: 5px;}
-            .line{border: 1px solid #70A1FF;margin-top: 10px;}
+            .line{border: 1px solid #2468F2;margin-top: 10px;}
             li{
                 list-style: none;
                 line-height: 30px;
@@ -493,7 +311,7 @@ export default {
                 label{
                     transition: color .25s;
                     cursor: pointer;
-                    &:hover{color: #1e90ff;}
+                    &:hover{color:#2468F2;}
                 }
             }
         }
@@ -506,70 +324,65 @@ export default {
             margin: 10px 0;
             transition: all .25s;
             span>i{margin-right: 5px;}
-            .line{border: 1px solid #70A1FF;margin: 10px 0;}
+            .line{border: 1px solid #2468F2;margin: 10px 0;}
             nav{
                 a{
                     color: #000;
                     transition: all .25s;
-                    &:hover{color: #1e90ff;}
+                    &:hover{color: #2468F2;}
                     &:last-child{margin: 0 0 0 10px;}
                 }
             }
         }
     }  
 }
-#blog>footer{
-    section{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center; 
-        p{
-            margin-bottom: 5px;
-            font-size: 12px;
-        }  
-    }
+@media screen and (max-width: 1260px) {
+  #blog>main>section{
+    grid-template-columns: 80vw!important;
+    grid-template-rows: auto auto!important;
+    grid-template-areas: 'a' 'b'!important;
+  }
+  #blog>main>section aside:first-child{
+    display: none!important;
+  } 
+  #blog>main>section aside:last-child {
+    grid-area: b!important;
+  }
 }
-.person-box{
-    position: absolute;
-    top: 5px;
-    right: 80px;
-    z-index: 999;
-    width: 100px;
-    height: 50px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-    border-radius: 5px;
-    &::before{
-        content: "";
-        position: absolute;
-        top: 20px;
-        left:-10px;
-        width: 0;
-        height: 0;
-        border-width:6px 10px 6px 0;
-        border-style: solid;
-        border-color: transparent #578BF5 transparent transparent;
-        box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-    }
-    div{
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 5px;
-        cursor: pointer;
-        &:hover{color: #578BF5;}
-    }
-    div:first-child{
-        border-bottom: 1px solid #ccc;
-        a{
-            color: #000;
-            &:hover{color: #578BF5;}
-        }
-    }
+@media screen and (min-width: 1261px) and (max-width: 1680px) {
+  #blog>main>section{
+    grid-template-columns: 300px 1fr!important;
+    grid-template-rows: 350px auto!important;
+    grid-template-areas: 'a b' 'c b'!important;
+    row-gap: 10px!important;
+  }
+  #blog>main>section aside:last-child {
+    grid-area: c!important;
+  }
+  #blog>main>section #content,#blog>main>section #article {
+    grid-area: b!important;
+  }
+}
+@media screen and (min-width: 1681px) {
+  #blog>main aside:first-child .me{
+    position: sticky;
+    top: 80px;
+  }
+  #blog>main aside:last-child .search{
+    position: sticky;
+    top: 80px;
+  }
+  #blog>main aside:last-child .sort{
+    position: sticky;
+    top: 190px;
+  }
+  #blog>main aside:last-child article{
+    position: sticky;
+    top: 360px;
+  }
+  #blog>main aside:last-child .link{
+    position: sticky;
+    top: 578px;
+  }
 }
 </style>

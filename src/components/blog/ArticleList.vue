@@ -105,7 +105,7 @@ export default {
             font-weight: 400;
             cursor: pointer;
             transition: color .3s;
-            &:hover{color: #1e90ff;}
+            &:hover{color: #2468F2;}
         }
         div{
             margin: 20px 0;
