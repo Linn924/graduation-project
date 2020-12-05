@@ -31,7 +31,7 @@
                             <div class="account-end">
                                 <router-link to="/register">注册</router-link>
                                 <span>|</span>
-                                <router-link to="/findpwd">忘记密码</router-link>
+                                <router-link to="/resetpwd">忘记密码</router-link>
                                 <span>|</span>
                                 <router-link to="/home">游客浏览</router-link>
                             </div>
@@ -50,7 +50,12 @@
             <div class="main-right">
             </div>
         </main>
-        <footer></footer>
+        <footer>
+            <section>
+                <span>© 2020 - 2021 LinnCode 版权所有</span>
+                <span> 苏ICP备20023864号</span>
+            </section>  
+        </footer>
     </div>
 </template>
 
@@ -61,8 +66,8 @@ export default {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
             loginForm:{//登录表单数据
-                username:'simon',
-                password:'123456'
+                username:'',
+                password:''
             },
             loginRules:{//登录表单验证规则
                 username:[
@@ -80,7 +85,7 @@ export default {
         //登录
         async logon(){
             this.$refs.loginFormRef.validate( async valid => {
-                if(!valid) return
+                if(!valid) return this.$message({message: '请输入用户名密码登录',type: 'error',duration:1000})
                 const {data:res} = await this.axios.post('login',this.loginForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000})
@@ -96,6 +101,7 @@ export default {
         faceLogon(){
             this.faceForm = true
             this.accountForm = false
+            this.$refs.loginFormRef.resetFields()
         }
     }
 }
@@ -105,12 +111,13 @@ export default {
 .logon{
     height: 100vh;
     background-color: #F6F8FB;
-    font-family: "Microsoft Yahei", "Hiragino Sans GB", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-repeat: repeat-y;
     background-size: 30% 100%;
     background-position: 0 0;
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAABCAYAAABkOJMpAAAAAXNSR0IArs4c6QAAABpJREFUOBFjVMn49J9hFIyGwGgIjIbAEAgBAK6uAn+8Yc3TAAAAAElFTkSuQmCC);
-    header,footer{
+    display: flex;
+    flex-direction: column;
+    header{
         padding: 70px 0;
         height: 20px;
         width: 1200px;
@@ -120,13 +127,17 @@ export default {
         width: 1200px;
         border-radius: 5px;
         margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
         background:url(https://s3.ax1x.com/2020/12/04/DqicSe.jpg) no-repeat center center;
     }
-    
+    footer{
+        flex: 1;
+        width: 1200px;
+        margin: 0 auto; 
+    }
 }
 main{
+    display: flex;
+    justify-content: space-between;
     .main-left{
         width: 420px;
         height: 492px;
@@ -155,19 +166,17 @@ main{
     .main-right{
     }
 }
-.line-special-left{
-    position: absolute;
-    top: 64px;
-    left: 0;
-    width: 160px;
-    border: 1px solid #2468F2;
-}
-.line-special-right{
-    position: absolute;
-    top: 64px;
-    left: 160px;
-    width: 160px;
-    border: 1px solid #2468F2;
+footer{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    section{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        span{font-size: 12px;}
+    }
 }
 .logon-method{
     height: 100%;
@@ -232,4 +241,19 @@ main{
         }
     }
 }
+.line-special-left{
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 160px;
+    border: 1px solid #2468F2;
+}
+.line-special-right{
+    position: absolute;
+    top: 64px;
+    left: 160px;
+    width: 160px;
+    border: 1px solid #2468F2;
+}
+
 </style>

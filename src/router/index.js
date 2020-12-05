@@ -4,13 +4,13 @@ const ArticleList = () => import(/* webpackChunkName: "ArticleList" */'../compon
 const Article = () => import(/* webpackChunkName: "Article" */'../components/blog/Article.vue')
 const Logon = () => import(/* webpackChunkName: "Logon" */'../components/Logon.vue')
 const Register = () => import(/* webpackChunkName: "Register" */'../components/Register.vue')
-const FindPwd = () => import(/* webpackChunkName: "FindPwd" */'../components/FindPwd.vue')
+const ReSetPwd = () => import(/* webpackChunkName: "FindPwd" */'../components/ReSetPwd.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
   { path: '*', component: NotFound },
-  { path:'/', redirect: '/findpwd' },
+  { path:'/', redirect: '/logon' },
   { path: '/home', 
     redirect: '/home/articlelist', 
     component: Home,
@@ -21,7 +21,7 @@ const routes = [
   },
   { path:'/logon', component:Logon },
   { path:'/register', component:Register },
-  { path:'/findpwd', component:FindPwd },
+  { path:'/resetpwd', component:ReSetPwd },
 ]
 
 const router = new VueRouter({

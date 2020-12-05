@@ -36,7 +36,7 @@
                                         </el-form-item>
                                         <el-form-item prop="email">
                                             <el-input v-model="registerForm.email" clearable prefix-icon="el-icon-message" 
-                                                placeholder="可用于评论等功能"></el-input>
+                                                placeholder="请设置邮箱"></el-input>
                                         </el-form-item>
                                     </el-form>
                                     <button @click="register">注册</button>
@@ -79,8 +79,8 @@ export default {
             faceForm:false,//隐藏人脸注册
             registerForm:{//注册表单数据
                 username:'',
-                password:'123456',
-                email:'linn924@126.com'
+                password:'',
+                email:''
             },
             registerRules:{//注册表单验证规则
                 password:[
@@ -139,8 +139,6 @@ export default {
                 const {data:res} = await this.axios.post('register',this.registerForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000})
-                this.$refs.registerFormRef.resetFields()
-                this.registerDialog = false
             })
         },
         //账号注册
@@ -152,6 +150,7 @@ export default {
         faceRegister(){
             this.faceForm = true
             this.accountForm = false
+            this.$refs.registerFormTwoRef.resetFields()
         }
     }
 }
@@ -190,7 +189,7 @@ main{
     .main-right{
         width: 480px;
         height: 620px;
-        background-color:rgba(255,255,255,.5);
+        background-color:rgba(255,255,255);
         border-radius: 15px;
         box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
         box-sizing: border-box;
@@ -246,7 +245,7 @@ main{
             margin-top: 30px;
             font-size: 12px;
             line-height: 2;
-            color: rgba(0, 0, 0);
+            color: #AAAAAA;
         }
     }
     .face-form{
@@ -273,7 +272,7 @@ main{
             margin-top: 20px;
             font-size: 12px;
             line-height: 2;
-            color: rgba(0, 0, 0);
+            color: #aaa;
         }
     }
 }

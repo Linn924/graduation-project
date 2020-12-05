@@ -1,5 +1,5 @@
 <template>
-    <div class="findpwd">
+    <div class="resetpwd">
         <!-- 遮罩 -->
         <div class="mask"></div>
         <section>
@@ -31,8 +31,8 @@
                                 <el-input v-model="validateFormTwo.password" clearable prefix-icon="el-icon-lock"
                                     placeholder="请输入新密码" type="password" autofocus="true"></el-input>
                             </el-form-item>
-                            <el-form-item prop="password">
-                                <el-input v-model="validateFormTwo.passwordagain" clearable prefix-icon="el-icon-lock"
+                            <el-form-item prop="checkpwd">
+                                <el-input v-model="validateFormTwo.checkpwd" clearable prefix-icon="el-icon-lock"
                                     placeholder="请确认新密码" type="password"></el-input>
                             </el-form-item>
                         </el-form>
@@ -42,8 +42,8 @@
                     </div>
                 </div>
                 <div class="button" v-show="active < 3">
+                    <el-button @click="back">上一步</el-button>
                     <el-button @click="next" type="primary">下一步</el-button>
-                    <el-button>重置</el-button>
                 </div>
             </div>
         </section>
@@ -63,6 +63,13 @@ export default {
             }
             cb(new Error('请输入合法的邮箱'))
         }
+        // 确认密码规则
+        var checkpwd = (rule, value, cb) => {
+            if (this.validateFormTwo.password === this.validateFormTwo.checkpwd) {   
+                return cb()
+            }
+            cb(new Error('两次密码不一致'))
+        }
         return {
             active: 1,
             validateFormOne:{//验证表单(setp1)
@@ -80,27 +87,59 @@ export default {
                 ]
             },
             validateFormTwo:{//验证表单(setp2)
+                username:'',
                 password:'',
-                passwordagain:''
+                checkpwd:''
             },
-            validateRulesTwo:{//账号、邮箱验证规则
+            validateRulesTwo:{//重置密码规则
                 password:[
                     { required: true, message: '请输入密码', trigger: 'blur' },
                     { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
-                ]
+                ],
+                checkpwd: [
+                    { required: true, message: '请确认密码', trigger: 'blur' },
+                    { validator: checkpwd, trigger: 'blur' }
+                ],
             },
         }
     },
     methods:{
+        //上一步
+        back(){
+            if(this.active === 1){
+                this.$router.push('/logon')
+            }else if(this.active === 2){
+                this.active--
+                this.$refs.validateFormTwoRef.resetFields()
+            }
+        },
+        //下一步
         next() {
-            this.active++
+            if(this.active === 1){
+                this.$refs.validateFormOneRef.validate( async valid => {
+                    if(!valid) return this.$message({message: `请按照规定进行身份验证`,type: 'error',duration:1000})
+                    const {data:res} = await this.axios.post('checkUidentity',this.validateFormOne)
+                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+                    this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                    this.validateFormTwo.username = this.validateFormOne.username
+                    this.active++
+                })
+            }else if(this.active === 2){
+                this.$refs.validateFormTwoRef.validate( async valid => {
+                    if(!valid) return this.$message({message: `请按照规定设置新密码`,type: 'error',duration:1000})
+                    const {data:res} = await this.axios.put('resetpwd',this.validateFormTwo)
+                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+                    this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                    this.active++
+                })
+            }
         }
     }
 }
 </script>
 
 <style lang="less" scoped>
-.findpwd{
+.resetpwd{
     height: 100vh;
     background: url(https://s3.ax1x.com/2020/12/04/DqiyWD.jpg) no-repeat center center;
     .mask{
@@ -129,7 +168,7 @@ h1{
     box-sizing: border-box;
     padding: 20px;
     background-color: rgba(255,255,255);
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
     .validate-process{
         width: 500px;
