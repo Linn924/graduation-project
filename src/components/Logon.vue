@@ -91,6 +91,8 @@ export default {
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:5})
                 window.sessionStorage.setItem('username',res.username)
                 window.sessionStorage.setItem('token',res.token)
+                window.sessionStorage.setItem('email',res.email)
+                window.sessionStorage.setItem('logontime',new Date())
                 this.$router.push('/blog')
             })
         },

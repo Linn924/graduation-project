@@ -11,7 +11,37 @@
                     </li>
                 </nav>
             </div>
-            <div class="main-right"></div>
+            <div class="main-right">
+                <div class="personal-information" v-show="currentIndex == 0">
+                    <div class="basic-data">
+                        <div class="basic-data-item">
+                            <span>昵称：</span>
+                            <input type="text" v-model="username">
+                            <span>修改</span>
+                        </div>
+                        <div class="basic-data-item">
+                            <span>邮箱：</span>
+                            <input type="text" v-model="email">
+                            <span>修改</span>
+                        </div>
+                    </div>
+                    <div class="fixed-data">
+                        登录时间：{{logontime | date}}
+                    </div>
+                </div>
+                <div class="comment-article" v-show="currentIndex == 1">
+                    评论文章
+                </div>
+                <div class="fabulous-article" v-show="currentIndex == 2">
+                    点赞文章
+                </div>
+                <div class="fabulous-article" v-show="currentIndex == 3">
+                    收藏文章
+                </div>
+                <div class="fabulous-article" v-show="currentIndex == 4">
+                    操作日志
+                </div>
+            </div>
         </main>
         <Footer></Footer>
     </div>
@@ -30,17 +60,28 @@ export default {
             navList:[//左侧导航
                 {id:0,className:'el-icon-user',title:'个人信息'},
                 {id:1,className:'el-icon-tickets',title:'评论文章'},
-                {id:2,className:'el-icon-thumb',title:'点赞文章'}
+                {id:2,className:'el-icon-thumb',title:'点赞文章'},
+                {id:3,className:'el-icon-star-off',title:'收藏文章'},
+                {id:4,className:'el-icon-document-remove',title:'操作日志'},
             ],
             currentIndex:0,//当前导航下标
+            username:'',//用户昵称
+            email:'',//用户邮箱
+            logontime:'',//登录时间
         }
+    },
+    created(){
+        this.username = window.sessionStorage.getItem('username')
+        this.email = window.sessionStorage.getItem('email')
+        this.logontime = window.sessionStorage.getItem('logontime')
     },
     methods:{
         //切换导航
         switchNav(id){
             this.currentIndex = id
         }
-    }
+    },
+    
 }
 </script>
 
@@ -65,7 +106,7 @@ main{
     box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
     box-sizing: border-box;
     border-radius: 8px;
-    height: 300px;
+    height: 400px;
     nav{
         list-style: none;
         box-sizing: border-box;
@@ -97,8 +138,24 @@ main{
     box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
     box-sizing: border-box;
     border-radius: 8px;
+    padding: 50px;
 }
 .changeColor{
     color: #2468F2!important;
+}
+.personal-information{
+    display: flex;
+    .basic-data{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-right: 1px solid #ccc;
+    }
+    .fixed-data{
+        flex: 1;
+        display: flex;
+        justify-content: center;
+    }
 }
 </style>
