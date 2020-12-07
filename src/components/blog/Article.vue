@@ -1,12 +1,17 @@
 <template>
     <div id="article">
         <article v-html="html" v-highlight class="markdown-body md"></article>
+        <Comment></Comment>
     </div>
 </template>
 
 <script>
 import showdown from 'showdown'
+import Comment from './Comment'
 export default {
+    components:{
+        Comment
+    },
     data(){
         return {
            html:''
