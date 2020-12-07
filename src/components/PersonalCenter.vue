@@ -14,19 +14,36 @@
             <div class="main-right">
                 <div class="personal-information" v-show="currentIndex == 0">
                     <div class="basic-data">
+                        <div class="basic-data-title">
+                            <span>基本信息</span>
+                            <div>
+                                <span v-show="disabled" @click="editInformation">编辑信息</span>
+                                <span v-show="!disabled" @click="cancelEditInformation">取消编辑</span>
+                            </div>
+                        </div>
                         <div class="basic-data-item">
                             <span>昵称：</span>
-                            <input type="text" v-model="username">
-                            <span>修改</span>
+                            <input class="input" ref="uname" type="text" @keyup="checkUname"
+                                :disabled="disabled" v-model="userForm.username">
+                            <span :class="isSuccessUname?'tips success-message':'tips fail-message'" 
+                                v-show="tipsUname">{{tipsUname}}</span>
                         </div>
                         <div class="basic-data-item">
                             <span>邮箱：</span>
-                            <input type="text" v-model="email">
-                            <span>修改</span>
+                            <input class="input" type="text" @keyup="checkEmail"
+                                :disabled="disabled" v-model="userForm.email">
+                            <span :class="isSuccessEmail?'tips success-message':'tips fail-message'" 
+                                v-show="tipsEmail">{{tipsEmail}}</span>
                         </div>
+                        <button class="button" @click="reviseInformation">提交</button>
                     </div>
                     <div class="fixed-data">
-                        登录时间：{{logontime | date}}
+                        <div class="fixed-data-title">
+                            <span>动态信息</span>
+                        </div>
+                        <div class="fixed-data-item">
+                            <span>登录时间：{{userForm.logontime | date}}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="comment-article" v-show="currentIndex == 1">
@@ -51,6 +68,7 @@
 import Header from './Header.vue'
 import Footer from './Footer.vue'
 export default {
+    inject:['reload'],//注入重载方法
     components:{
         Header,
         Footer
@@ -65,20 +83,100 @@ export default {
                 {id:4,className:'el-icon-document-remove',title:'操作日志'},
             ],
             currentIndex:0,//当前导航下标
-            username:'',//用户昵称
-            email:'',//用户邮箱
-            logontime:'',//登录时间
+            userForm:{
+                id:Number,
+                username:'',//用户昵称
+                email:'',//用户邮箱
+                status:'修改',//操作状态
+                logontime:''//登录时间
+            },
+            disabled:true,//禁止修改个人信息
+            tipsUname:'',//昵称提示语
+            tipsEmail:'',//邮箱提示语
+            timerUname:null,//用户名定时器
+            timerEmail:null,//邮箱定时器
+            isSuccessUname:false,//用户名验证信息是否正确
+            isSuccessEmail:false,//邮箱验证信息是否正确
         }
     },
     created(){
-        this.username = window.sessionStorage.getItem('username')
-        this.email = window.sessionStorage.getItem('email')
-        this.logontime = window.sessionStorage.getItem('logontime')
+        this.getUserData()
     },
     methods:{
         //切换导航
         switchNav(id){
             this.currentIndex = id
+        },
+        //获取用户个人信息
+        getUserData(){
+            let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
+            if(userForm !== null){
+                this.userForm.username = userForm.username
+                this.userForm.email = userForm.email
+                this.userForm.logontime = userForm.logontime
+                this.userForm.id = userForm.id
+            }
+            
+        },
+        //编辑个人信息
+        editInformation(){
+            this.disabled = false
+            this.$nextTick(() => {
+                this.$refs.uname.focus()
+            })
+        },
+        //取消编辑
+        cancelEditInformation(){
+            this.disabled = true
+            this.getUserData()
+            this.tipsUname = ''
+            this.tipsEmail = ''
+        },
+        //修改个人信息
+        async reviseInformation(){
+            if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000})
+            if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000})
+            const {data:res} = await this.axios.put('reviseUinformation',this.userForm)
+            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
+            let userForm = {
+                id:this.userForm.id,
+                username:this.userForm.username,
+                email:this.userForm.email,
+                logontime:this.userForm.logontime
+            }
+            window.sessionStorage.setItem('userForm',JSON.stringify(userForm))
+            this.reload()
+        },
+        //检查昵称是否可用
+        checkUname(){
+            clearTimeout(this.timerUname)
+            this.timerUname = setTimeout(async () => {
+                const {data:res} = await this.axios.post('checkUname',this.userForm)
+                if(res.code != 200) this.isSuccessUname = false
+                else this.isSuccessUname = true
+                this.tipsUname = res.tips
+            },500)
+        },
+        //检查邮箱是否可用
+        checkEmail(){
+            clearTimeout(this.timerEmail)
+            this.timerEmail = setTimeout(() => {
+                const regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+                if (regEmail.test(this.userForm.email)) {
+                    if(this.userForm.email === JSON.parse(window.sessionStorage.getItem('userForm')).email) {
+                        this.tipsEmail = '未作出修改'
+                        this.isSuccessEmail = false
+                    }
+                    else {
+                        this.tipsEmail = '邮箱可用~'
+                        this.isSuccessEmail = true
+                    }
+                }
+                else {
+                    this.tipsEmail = '邮箱不可用'
+                    this.isSuccessEmail = false
+                }
+            },500)
         }
     },
     
@@ -145,17 +243,74 @@ main{
 }
 .personal-information{
     display: flex;
+    justify-content: flex-start;
     .basic-data{
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
         border-right: 1px solid #ccc;
+        box-sizing: border-box;
+        .basic-data-title{
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            div{margin-right: 22px;}
+            div span{
+                color: #2468F2;
+                cursor: pointer;
+                &:hover{text-decoration: underline;}
+            }
+        }
+        .basic-data-item{
+            display: flex;
+            position: relative;
+            margin-bottom: 30px;
+            .tips{
+                position: absolute;
+                top: 25px;
+                font-size: 12px;
+            }
+        }
     }
     .fixed-data{
+        box-sizing: border-box;
+        padding: 0 22px;
         flex: 1;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        .fixed-data-title{
+            margin-bottom: 30px;
+        }
+        .fixed-data-item{
+            margin-bottom: 30px;
+        }
     }
+}
+.input{
+    border: none;
+    outline: none;
+    width: 500px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+}
+.button{
+    align-self: center;
+    outline: none;
+    border: none;
+    background-color: #2468F2;
+    color: #fff;
+    width: 80px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 50px;
+    &:hover{opacity: 0.8;}
+}
+.success-message{
+    color: #67C23A!important;
+}
+.fail-message{
+    color:#F56C6C!important;
 }
 </style>

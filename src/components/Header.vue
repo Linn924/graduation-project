@@ -75,25 +75,30 @@ export default {
     },
     data(){
         return {
-            username:'', //用户登录名称         
-            status:false,//登录状态,未登录  
+            username:'', //用户登录名称
+            status:false,//登录状态         
             personBoxShow:false,//个人中心盒子隐藏 
         }
     },
     created(){
-        this.getUname()
+        this.getUserData()
     },
     methods:{
-        //获取登录名称
-        getUname(){
-            this.username = sessionStorage.getItem('username')
-            this.status = sessionStorage.getItem('username') !== null ? true : false
-        },
         //登出
         logout(){
             window.sessionStorage.clear()
             this.reload()
             this.$router.push('/blog/articlelist')
+        },
+        //获取用户信息
+        getUserData(){
+            let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
+            if(userForm === null){
+                this.status = false
+            }else{
+                this.username = userForm.username
+                this.status = true
+            }   
         }
     }
 }
@@ -110,7 +115,7 @@ header{
     section:first-child{
         width: 80vw;
         display: grid;
-        grid-template-columns:140px 1fr 130px;
+        grid-template-columns:140px 1fr auto;
         grid-template-rows: 1fr;
         margin: 0 auto;
         >a{

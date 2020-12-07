@@ -89,10 +89,14 @@ export default {
                 const {data:res} = await this.axios.post('login',this.loginForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:5})
-                window.sessionStorage.setItem('username',res.username)
+                let userFrom = {
+                    id:res.id,
+                    username:res.username,
+                    email:res.email,
+                    logontime:new Date()
+                }
                 window.sessionStorage.setItem('token',res.token)
-                window.sessionStorage.setItem('email',res.email)
-                window.sessionStorage.setItem('logontime',new Date())
+                window.sessionStorage.setItem('userForm',JSON.stringify(userFrom))
                 this.$router.push('/blog')
             })
         },

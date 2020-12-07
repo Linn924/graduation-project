@@ -80,7 +80,8 @@ export default {
             registerForm:{//注册表单数据
                 username:'',
                 password:'',
-                email:''
+                email:'',
+                status:'注册',//操作状态
             },
             registerRules:{//注册表单验证规则
                 password:[
