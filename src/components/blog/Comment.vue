@@ -7,7 +7,7 @@
         </div>
         <div class="yours-comment">
             <div class="part-one">
-                <img src="https://s3.ax1x.com/2020/12/02/D5a7qK.jpg" alt="">
+                <img :src="user_avatar" alt="">
                 <div class="triangle"></div>
                 <textarea placeholder="评论" maxlength=140 v-model="commentForm.content"></textarea>
             </div>
@@ -21,8 +21,8 @@
                 <span>所有评论</span>
                 <div></div>
             </div>
-            <div class="others-comment-item" v-for="item in commentList" :key="item.id">
-                <img src="https://s1.ax1x.com/2020/10/12/0WPkND.jpg" alt="">
+            <div class="others-comment-item" v-for="(item,index) in commentList" :key="item.id">
+                <img :src="item.avatar" alt="">
                 <div class="right">
                     <div class="content">
                         <span>{{item.username}}：</span>
@@ -31,7 +31,8 @@
                     <div class="time">
                         <span>{{item.date | date}}</span>
                         <div class="operate">
-                            <span><i class="el-icon-thumb"></i>{{item.agree_count}}</span>
+                            <span @click="agree(item)" :class="flagArr[index].status?'changeColor':''">
+                                <i class="el-icon-thumb"></i>{{item.agree_count}}</span>
                             <span>|</span>
                             <span>回复</span>
                         </div>
@@ -57,10 +58,35 @@ export default {
                 content:'',
                 date:new Date(),
                 agree_count:0
-            }
+            },
+            user_avatar:'',
+            // flagArr:[],//判断当前登录的用户点赞了哪些评论
+        }
+    },
+    created(){
+        let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
+        if(userForm !== null) {
+            this.commentForm.user_id = userForm.id
+            this.user_avatar = userForm.avatar
+        }
+    },
+    computed:{
+        flagArr(){
+            let arr = Array.from({length: this.commentList.length}, () => ({status:false}))
+            this.commentList.forEach((item,index) => {
+                if(JSON.parse(item.agree_user_id).length !== 0){
+                   JSON.parse(item.agree_user_id).some(i => {
+                       if(i == this.commentForm.user_id){
+                           arr[index].status = true
+                       }
+                   })
+                }
+            })
+            return arr
         }
     },
     methods:{
+        //时间格式处理
         dealDate(time){
             const t = new Date(time)
             const y = t.getFullYear()
@@ -71,11 +97,10 @@ export default {
             const ss = (t.getSeconds() + '').padStart(2, '0')
             return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
         },
+        //提交评论
         async submitComment(){
             if(window.sessionStorage.token === null) return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
             if(this.commentForm.content.length === 0) return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
-            let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
-            if(userForm !== null) this.commentForm.user_id = userForm.id
             this.commentForm.blog_id = this.id
             this.commentForm.date = this.dealDate(this.commentForm.date)
             const {data:res} = await this.axios.post('addComment',this.commentForm)
@@ -85,7 +110,11 @@ export default {
             }
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
             this.reload()
+        },
+        //点赞
+        agree(data){
             
+            this.flag = !this.flag
         }
     }
 }
@@ -219,5 +248,8 @@ export default {
     text-align: center;
     margin: 50px 0;
     color: red;
+}
+.changeColor{
+    color: #2468F2!important;
 }
 </style>

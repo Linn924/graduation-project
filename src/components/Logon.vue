@@ -66,7 +66,7 @@ export default {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
             loginForm:{//登录表单数据
-                username:'北极星',
+                username:'simon',
                 password:'123456'
             },
             loginRules:{//登录表单验证规则
@@ -93,6 +93,7 @@ export default {
                     id:res.id,
                     username:res.username,
                     email:res.email,
+                    avatar:res.avatar,
                     logontime:new Date()
                 }
                 window.sessionStorage.setItem('token',res.token)

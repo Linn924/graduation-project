@@ -81,6 +81,7 @@ export default {
                 username:'',
                 password:'',
                 email:'',
+                avatar:'https://s3.ax1x.com/2020/12/09/r9jlDg.png',//默认头像
                 status:'注册',//操作状态
             },
             registerRules:{//注册表单验证规则

@@ -21,6 +21,13 @@
                                 <span v-show="!disabled" @click="cancelEditInformation">取消编辑</span>
                             </div>
                         </div>
+                        <div class="head-portrait">
+                            <img :src="userForm.avatar" alt="">
+                            <div>
+                                <input type="file" accept="image/*" @change="uploadFile" ref="uploadImg" v-show="false"/>
+                                <span @click="$refs.uploadImg.click()">修改</span>
+                            </div>
+                        </div>
                         <div class="basic-data-item">
                             <span>昵称：</span>
                             <input class="input" ref="uname" type="text" @keyup="checkUname"
@@ -87,6 +94,7 @@ export default {
                 id:Number,
                 username:'',//用户昵称
                 email:'',//用户邮箱
+                avatar:'',//用户头像
                 status:'修改',//操作状态
                 logontime:''//登录时间
             },
@@ -115,6 +123,7 @@ export default {
                 this.userForm.email = userForm.email
                 this.userForm.logontime = userForm.logontime
                 this.userForm.id = userForm.id
+                this.userForm.avatar = userForm.avatar
             }
             
         },
@@ -134,18 +143,23 @@ export default {
         },
         //修改个人信息
         async reviseInformation(){
-            if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000})
-            if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000})
+            if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000,offset:5})
+            if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000,offset:5})
             const {data:res} = await this.axios.put('reviseUinformation',this.userForm)
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
+            this.updateSessionStorage()
+            this.reload()
+        },
+        //更新本地存储
+        updateSessionStorage(){
             let userForm = {
                 id:this.userForm.id,
                 username:this.userForm.username,
                 email:this.userForm.email,
-                logontime:this.userForm.logontime
+                logontime:this.userForm.logontime,
+                avatar:this.userForm.avatar
             }
             window.sessionStorage.setItem('userForm',JSON.stringify(userForm))
-            this.reload()
         },
         //检查昵称是否可用
         checkUname(){
@@ -177,6 +191,20 @@ export default {
                     this.isSuccessEmail = false
                 }
             },500)
+        },
+        //上传头像
+        async uploadFile(e){
+            let image = e.target.files[0] //获取图片文件
+            let formData = new FormData()  // 创建form对象
+            formData.append('image', image)  // 通过append向form对象添加数据
+            formData.append('username',this.userForm.username)
+            formData.append('avatar',this.userForm.avatar)
+            const {data:res} = await this.axios.post('uploadImg',formData)
+            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.userForm.avatar = res.data
+            this.updateSessionStorage()
+            this.reload()
         }
     },
     
@@ -259,6 +287,24 @@ main{
                 color: #2468F2;
                 cursor: pointer;
                 &:hover{text-decoration: underline;}
+            }
+        }
+        .head-portrait{
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            img{
+                height: 60px;
+                width: 60px;
+                border-radius: 50%;
+            }
+            div{
+                margin-left: 20px;
+                span{
+                    color: #2468F2;
+                    cursor: pointer;
+                    &:hover{text-decoration: underline;}  
+                }
             }
         }
         .basic-data-item{
