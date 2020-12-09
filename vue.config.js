@@ -9,12 +9,12 @@ module.exports = {
           'element-ui': 'ELEMENT'
         })
     },
-    devServer: {
-      proxy: {
-        '/api': {
-          target: 'https://aip.baidubce.com',
-          changeOrigin: true
-        }
-      }
-    },
+    // devServer: {
+    //   proxy: {
+    //     '/api': {
+    //       target: 'https://aip.baidubce.com',
+    //       changeOrigin: true
+    //     }
+    //   }
+    // },
 }

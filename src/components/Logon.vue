@@ -66,13 +66,13 @@ export default {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
             loginForm:{//登录表单数据
-                username:'simon',
+                username:'北极星',
                 password:'123456'
             },
             loginRules:{//登录表单验证规则
                 username:[
                     { required: true, message: '请输入用户名', trigger: 'blur' },
-                    { min: 4, max: 10, message: '长度在 4 到 10 个字符', trigger: 'blur' }
+                    { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
                 ],
                 password:[
                     { required: true, message: '请输入密码', trigger: 'blur' },

@@ -79,8 +79,7 @@ export default {
             this.commentForm.blog_id = this.id
             this.commentForm.date = this.dealDate(this.commentForm.date)
             const {data:res} = await this.axios.post('addComment',this.commentForm)
-            console.log(res)
-            if(res.code !== 200) {
+            if(res.code != 200) {
                 this.commentForm.content = ''
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             }
