@@ -1,7 +1,7 @@
 <template>
     <div id="article">
         <article v-html="html" v-highlight class="markdown-body md"></article>
-        <Comment :commentList="commentList" :id="blog_id"></Comment>
+        <Comment :commentList="commentList" :id="blog_id" :getBlogComment="getBlogComment"></Comment>
     </div>
 </template>
 
@@ -35,6 +35,7 @@ export default {
             const {data:res} = await this.axios.get(`readmd/${mdname}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
             this.html = converter.makeHtml(res.data[0].content)
+            window.sessionStorage.setItem('blog_id',res.data[0].id)
             this.blog_id = res.data[0].id
             this.getBlogComment(this.blog_id)
         },

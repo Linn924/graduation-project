@@ -31,7 +31,7 @@
                     <div class="time">
                         <span>{{item.date | date}}</span>
                         <div class="operate">
-                            <span @click="agree(item)" :class="flagArr[index].status?'changeColor':''">
+                            <span @click="agree(item,index)" :class="arr[index].status?'changeColor':''">
                                 <i class="el-icon-thumb"></i>{{item.agree_count}}</span>
                             <span>|</span>
                             <span>回复</span>
@@ -49,7 +49,11 @@
 <script>
 export default {
     inject:['reload'],//注入重载方法
-    props:['commentList','id'],
+    props:{
+        'commentList':Array,
+        'id':Number,
+        'getBlogComment':Function
+    },
     data(){
         return {
             commentForm:{
@@ -60,7 +64,7 @@ export default {
                 agree_count:0
             },
             user_avatar:'',
-            // flagArr:[],//判断当前登录的用户点赞了哪些评论
+            flagArr:[],//判断当前登录的用户点赞了哪些评论
         }
     },
     created(){
@@ -68,21 +72,23 @@ export default {
         if(userForm !== null) {
             this.commentForm.user_id = userForm.id
             this.user_avatar = userForm.avatar
+        }else{
+            this.user_avatar = 'https://s3.ax1x.com/2020/12/09/r9jlDg.png'
         }
     },
     computed:{
-        flagArr(){
-            let arr = Array.from({length: this.commentList.length}, () => ({status:false}))
+        arr(){
+            this.flagArr = Array.from({length: this.commentList.length}, () => ({status:false}))
             this.commentList.forEach((item,index) => {
                 if(JSON.parse(item.agree_user_id).length !== 0){
                    JSON.parse(item.agree_user_id).some(i => {
                        if(i == this.commentForm.user_id){
-                           arr[index].status = true
+                           this.flagArr[index].status = true
                        }
                    })
                 }
             })
-            return arr
+            return this.flagArr
         }
     },
     methods:{
@@ -99,8 +105,10 @@ export default {
         },
         //提交评论
         async submitComment(){
-            if(window.sessionStorage.token === null) return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
-            if(this.commentForm.content.length === 0) return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
+            if(!window.sessionStorage.token)  
+            return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
+            if(this.commentForm.content.length === 0) 
+            return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
             this.commentForm.blog_id = this.id
             this.commentForm.date = this.dealDate(this.commentForm.date)
             const {data:res} = await this.axios.post('addComment',this.commentForm)
@@ -112,9 +120,43 @@ export default {
             this.reload()
         },
         //点赞
-        agree(data){
-            
-            this.flag = !this.flag
+        async agree(data,index){
+            if(!window.sessionStorage.token) 
+            return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
+            this.flagArr[index].status = !this.flagArr[index].status
+            let arr = JSON.parse(data.agree_user_id),agree_user_id,agree_count
+            let copyArr = Object.assign([],arr)
+            if(copyArr.length == 0){
+                if(this.flagArr[index].status){
+                    agree_user_id = JSON.stringify(copyArr.concat(this.commentForm.user_id))
+                    agree_count = data.agree_count + 1
+                }else {
+                    agree_user_id = JSON.stringify(copyArr)
+                    agree_count = data.agree_count - 1
+                }
+            }else{
+                if(this.flagArr[index].status){
+                    agree_count = data.agree_count + 1
+                    let flag = copyArr.some(item => item == this.commentForm.user_id)
+                    if(flag) agree_user_id = JSON.stringify(copyArr)
+                    else agree_user_id = JSON.stringify(copyArr.concat(this.commentForm.user_id))
+                }else{
+                    agree_user_id = JSON.stringify(copyArr.filter(item => item != this.commentForm.user_id))
+                    agree_count = data.agree_count - 1
+                }  
+            }
+            let commentForm = {
+                id:data.id,
+                agree_count:agree_count,
+                agree_user_id:agree_user_id
+            }
+            const {data:res} = await this.axios.put('agreeComment',commentForm)
+            if(res.code != 200) {
+                this.flagArr[index].status = !this.flagArr[index].status
+                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+            }
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.getBlogComment(window.sessionStorage.getItem('blog_id'))
         }
     }
 }
