@@ -28,13 +28,25 @@
                         <span>{{item.username}}：</span>
                         <span>{{item.content}}</span>
                     </div>
+                    <div class="reply-comment" v-for="(it,i) in item.children" :key="i">
+                        <span>{{it.username}}：</span>
+                        <span>{{it.reply_content}}</span>
+                    </div>
                     <div class="time">
                         <span>{{item.date | date}}</span>
                         <div class="operate">
-                            <span @click="agree(item,index)" :class="arr[index].status?'changeColor':''">
+                            <span @click="agreeUser(item,index)" :class="agree[index].status?'changeColor':''">
                                 <i class="el-icon-thumb"></i>{{item.agree_count}}</span>
                             <span>|</span>
-                            <span>回复</span>
+                            <span @click="showReplyBox(index)">回复</span>
+                        </div>
+                    </div>
+                    <div class="replyBox" v-if="reply[index].status">
+                        <div class="triangle"></div>
+                        <textarea maxlength=140 v-model="reply[index].content"></textarea>
+                        <div>
+                            <span>140</span>
+                            <button @click="replyUser(item,index)">回复</button>
                         </div>
                     </div>
                 </div>
@@ -56,15 +68,19 @@ export default {
     },
     data(){
         return {
-            commentForm:{
+            commentForm:{//评论表单
                 blog_id:'',
                 user_id:'',
                 content:'',
                 date:new Date(),
                 agree_count:0
             },
+            replyForm:{//回复表单
+                content:''
+            },
             user_avatar:'',
-            flagArr:[],//判断当前登录的用户点赞了哪些评论
+            agreeArr:[],//判断当前登录的用户点赞了哪些评论
+            replyArr:[],//判断点击了哪些评论下边的回复链接
         }
     },
     created(){
@@ -77,18 +93,23 @@ export default {
         }
     },
     computed:{
-        arr(){
-            this.flagArr = Array.from({length: this.commentList.length}, () => ({status:false}))
+        agree(){
+            this.agreeArr = Array.from({length: this.commentList.length}, () => ({status:false}))
             this.commentList.forEach((item,index) => {
                 if(JSON.parse(item.agree_user_id).length !== 0){
                    JSON.parse(item.agree_user_id).some(i => {
                        if(i == this.commentForm.user_id){
-                           this.flagArr[index].status = true
+                           this.agreeArr[index].status = true
                        }
                    })
                 }
             })
-            return this.flagArr
+            return this.agreeArr
+        },
+        reply(){
+            this.replyArr = Array.from({length: this.commentList.length}, () => ({status:false,content:''}))
+            this.commentList.forEach((item,index) => this.replyArr[index].content = '回复' + item.username + ':')
+            return this.replyArr
         }
     },
     methods:{
@@ -106,7 +127,7 @@ export default {
         //提交评论
         async submitComment(){
             if(!window.sessionStorage.token)  
-            return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
+            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             if(this.commentForm.content.length === 0) 
             return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
             this.commentForm.blog_id = this.id
@@ -120,28 +141,38 @@ export default {
             this.reload()
         },
         //点赞
-        async agree(data,index){
+        async agreeUser(data,index){
             if(!window.sessionStorage.token) 
-            return this.$message({message:'您还没有登录，请点击右上角的登录按钮',type:'error',duration:1000,offset:5})
-            this.flagArr[index].status = !this.flagArr[index].status
+            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            let commentForm = this.dealAgree(data,index)
+            const {data:res} = await this.axios.put('agreeComment',commentForm)
+            if(res.code != 200) {
+                this.agreeArr[index].status = !this.agreeArr[index].status
+                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+            }
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.getBlogComment(window.sessionStorage.getItem('blog_id'))
+        },
+        //处理点赞的逻辑代码
+        dealAgree(data,index){
+            this.agreeArr[index].status = !this.agreeArr[index].status
             let arr = JSON.parse(data.agree_user_id),agree_user_id,agree_count
-            let copyArr = Object.assign([],arr)
-            if(copyArr.length == 0){
-                if(this.flagArr[index].status){
-                    agree_user_id = JSON.stringify(copyArr.concat(this.commentForm.user_id))
+            if(arr.length == 0){
+                if(this.agreeArr[index].status){
+                    agree_user_id = JSON.stringify(arr.concat(this.commentForm.user_id))
                     agree_count = data.agree_count + 1
                 }else {
-                    agree_user_id = JSON.stringify(copyArr)
+                    agree_user_id = JSON.stringify(arr)
                     agree_count = data.agree_count - 1
                 }
             }else{
-                if(this.flagArr[index].status){
+                if(this.agreeArr[index].status){
                     agree_count = data.agree_count + 1
-                    let flag = copyArr.some(item => item == this.commentForm.user_id)
-                    if(flag) agree_user_id = JSON.stringify(copyArr)
-                    else agree_user_id = JSON.stringify(copyArr.concat(this.commentForm.user_id))
+                    let flag = arr.some(item => item == this.commentForm.user_id)
+                    if(flag) agree_user_id = JSON.stringify(arr)
+                    else agree_user_id = JSON.stringify(arr.concat(this.commentForm.user_id))
                 }else{
-                    agree_user_id = JSON.stringify(copyArr.filter(item => item != this.commentForm.user_id))
+                    agree_user_id = JSON.stringify(arr.filter(item => item != this.commentForm.user_id))
                     agree_count = data.agree_count - 1
                 }  
             }
@@ -150,9 +181,28 @@ export default {
                 agree_count:agree_count,
                 agree_user_id:agree_user_id
             }
-            const {data:res} = await this.axios.put('agreeComment',commentForm)
+            return commentForm
+        },
+        //显示回复盒子
+        showReplyBox(index){
+            if(!window.sessionStorage.token) 
+            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            this.replyArr[index].status = !this.replyArr[index].status
+        },
+        //回复
+        async replyUser(data,index){
+            let replyForm = {
+                blog_id:'',//博客id
+                commentator_id:'',//评论人ID
+                respondent_id:'',//被评论人ID
+                reply_content:'',//回复评论的内容
+            }
+            replyForm.blog_id = this.id
+            replyForm.commentator_id = this.commentForm.user_id
+            replyForm.respondent_id = data.user_id
+            replyForm.reply_content = this.replyArr[index].content.split(`回复${data.username}:`)[1]
+            const {data:res} = await this.axios.post('replyComment',replyForm)
             if(res.code != 200) {
-                this.flagArr[index].status = !this.flagArr[index].status
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             }
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
@@ -261,6 +311,18 @@ export default {
                 font-size: 14px;
                 span:first-child{color: #2468F2;}
             }
+            .reply-comment{
+                min-height: 40px;
+                box-sizing: border-box;
+                background-color: #F8F8F8;
+                border: 1px solid #D9D9D9;
+                margin-top: 10px;
+                display: flex;
+                align-items: center;
+                padding-left:20px;
+                span{font-size: 12px;}
+                span:first-child{color: #2468F2;}
+            }
             .time{
                 margin-top: 20px;
                 display: flex;
@@ -279,7 +341,64 @@ export default {
                     }
                     span:last-child{
                         cursor: pointer;
-                        &:hover{color: #2468F2;}
+                        &:hover{color: #2468F2;text-decoration: underline;}
+                    }
+                }
+            }
+            .replyBox{
+                position: relative;
+                box-sizing: border-box;
+                padding: 20px;
+                height: 100px;
+                background-color: #F8F8F8;
+                border: 1px solid #D9D9D9;
+                margin-top: 20px;
+                .triangle{
+                    position: absolute;
+                    top: -10px;
+                    right:5px;
+                    width: 0;
+                    height: 0;
+                    border-width:0 10px 10px 10px;
+                    border-style: solid;
+                    border-color: transparent transparent #CDCDCD transparent;
+                    &::after{
+                        content: "";
+                        position: absolute;
+                        top: 1px;
+                        right: -9px;
+                        width: 0;
+                        height: 0;
+                        border-width: 0 9px 9px 9px;
+                        border-style: solid;
+                        border-color: transparent transparent #F8F8F8 transparent;
+                    }
+                }
+                textarea{
+                    width: 100%;
+                    resize: none;
+                    border-radius: 2px;
+                    border: 1px solid #CDCDCD;
+                    outline: #CDCDCD;
+                    padding: 3px 0 0 5px;
+                }
+                div:last-child{
+                    margin-top: 10px;
+                    display: flex;
+                    justify-content: flex-end;
+                    span{color: #666;font-size: 14px;}
+                    button{
+                        margin-left: 10px;
+                        height: 20px;
+                        width: 44px;
+                        color: #fff;
+                        background-color: #2468F2;
+                        border: none;
+                        outline: none;
+                        cursor: pointer;
+                        border-radius: 2px;
+                        font-size: 12px;
+                        &:hover{opacity: 0.8;}
                     }
                 }
             }

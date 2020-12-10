@@ -42,8 +42,21 @@ export default {
         async getBlogComment(id){
             const {data:res} = await this.axios.get(`getAllComment/${id}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
+            this.dealCommentData(res)
+        },
+        dealCommentData(res){
+            res.data.forEach((item,index) => {
+                let arr = []
+                res.data2.forEach(i => {
+                    if(item.user_id === i.respondent_id){
+                        arr.push(i)
+                    }
+                })
+                item.children = arr
+            })
             this.commentList = res.data
         }
+        
     }
 }
 </script>

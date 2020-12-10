@@ -57,12 +57,9 @@
                     评论文章
                 </div>
                 <div class="fabulous-article" v-show="currentIndex == 2">
-                    点赞文章
-                </div>
-                <div class="fabulous-article" v-show="currentIndex == 3">
                     收藏文章
                 </div>
-                <div class="fabulous-article" v-show="currentIndex == 4">
+                <div class="fabulous-article" v-show="currentIndex == 3">
                     操作日志
                 </div>
             </div>
@@ -85,9 +82,8 @@ export default {
             navList:[//左侧导航
                 {id:0,className:'el-icon-user',title:'个人信息'},
                 {id:1,className:'el-icon-tickets',title:'评论文章'},
-                {id:2,className:'el-icon-thumb',title:'点赞文章'},
-                {id:3,className:'el-icon-star-off',title:'收藏文章'},
-                {id:4,className:'el-icon-document-remove',title:'操作日志'},
+                {id:2,className:'el-icon-star-off',title:'收藏文章'},
+                {id:3,className:'el-icon-document-remove',title:'操作日志'},
             ],
             currentIndex:0,//当前导航下标
             userForm:{
