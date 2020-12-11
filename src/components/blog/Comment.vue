@@ -75,10 +75,7 @@ export default {
                 date:new Date(),
                 agree_count:0
             },
-            replyForm:{//回复表单
-                content:''
-            },
-            user_avatar:'',
+            user_avatar:'',//当前用户头像
             agreeArr:[],//判断当前登录的用户点赞了哪些评论
             replyArr:[],//判断点击了哪些评论下边的回复链接
         }
@@ -93,6 +90,7 @@ export default {
         }
     },
     computed:{
+        //获取当前用户点赞了哪些评论(状态判断)
         agree(){
             this.agreeArr = Array.from({length: this.commentList.length}, () => ({status:false}))
             this.commentList.forEach((item,index) => {
@@ -106,6 +104,7 @@ export default {
             })
             return this.agreeArr
         },
+        //获取当前用户点击了哪些评论下边的回复(状态判断)
         reply(){
             this.replyArr = Array.from({length: this.commentList.length}, () => ({status:false,content:''}))
             this.commentList.forEach((item,index) => this.replyArr[index].content = '回复' + item.username + ':')
@@ -113,7 +112,7 @@ export default {
         }
     },
     methods:{
-        //时间格式处理
+        //处理时间格式
         dealDate(time){
             const t = new Date(time)
             const y = t.getFullYear()

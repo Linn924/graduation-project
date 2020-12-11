@@ -2,6 +2,7 @@
     <div class="personal-center">
         <Header :isSearch="false"></Header>
         <main>
+            <!-- 左侧导航 -->
             <div class="main-left">
                 <nav>
                     <li v-for="item in navList" :key="item.id" @click="switchNav(item.id)"  
@@ -11,7 +12,9 @@
                     </li>
                 </nav>
             </div>
+            <!-- 右侧与导航相对应模块 -->
             <div class="main-right">
+                <!-- 个人信息 -->
                 <div class="personal-information" v-show="currentIndex == 0">
                     <div class="basic-data">
                         <div class="basic-data-title">
@@ -53,9 +56,11 @@
                         </div>
                     </div>
                 </div>
+                <!-- 评论文章 -->
                 <div class="comment-article" v-show="currentIndex == 1">
                     评论文章
                 </div>
+                <!-- 操作日志 -->
                 <div class="fabulous-article" v-show="currentIndex == 2">
                     操作日志
                 </div>

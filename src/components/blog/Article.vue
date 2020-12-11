@@ -1,6 +1,8 @@
 <template>
     <div id="article">
+        <!-- 博客 -->
         <article v-html="html" v-highlight class="markdown-body md"></article>
+        <!-- 评论 -->
         <Comment :commentList="commentList" :id="blog_id" :getBlogComment="getBlogComment"></Comment>
     </div>
 </template>
@@ -10,13 +12,13 @@ import showdown from 'showdown'
 import Comment from './Comment'
 export default {
     components:{
-        Comment
+        Comment,//评论组件
     },
     data(){
         return {
-           html:'',
-           commentList:[],
-           blog_id:Number
+           html:'',//当前博客
+           commentList:[],//所有与当前博客相关的评论
+           blog_id:Number,//当前博客id
         }
     },
     watch: {
@@ -25,9 +27,10 @@ export default {
         }
     },
     created() {
-        this.getmd()//获取md文档博客数据
+        this.getmd()
     },
     methods: {
+        //获取md文档博客数据
         async getmd(){
             var converter = new showdown.Converter()
             var url = window.location.href;
@@ -39,11 +42,13 @@ export default {
             this.blog_id = res.data[0].id
             this.getBlogComment(this.blog_id)
         },
+        //根据当前博客id获取所有与当前博客相关的评论
         async getBlogComment(id){
             const {data:res} = await this.axios.get(`getAllComment/${id}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
             this.dealCommentData(res)
         },
+        //处理获取到的与博客相关的评论
         dealCommentData(res){
             res.data.forEach((item,index) => {
                 let arr = []

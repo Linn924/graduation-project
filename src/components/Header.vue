@@ -90,7 +90,7 @@ export default {
             this.reload()
             this.$router.push('/blog/articlelist')
         },
-        //获取用户信息
+        //获取用户信息及状态
         getUserData(){
             let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
             if(userForm === null){

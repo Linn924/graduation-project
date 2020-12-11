@@ -155,6 +155,7 @@ export default {
         clickSort(data){
             this.$router.push(`/blog/articlelist?sort=${data.sort_name}&id=${data.id}`)
         }, 
+        //再次获取博客列表
         getBlogAgain(){
             this.$refs.article.getBlogData()
             this.isSearch = false

@@ -2,7 +2,7 @@
     <div class="logon">
         <header></header>
         <main>
-            <!-- 左侧关于登录的部分 -->
+            <!-- 左侧登录 -->
             <div class="main-left">
                 <div class="logon-form">
                     <div class="title">
@@ -13,7 +13,7 @@
                     <div :class="accountForm?'line-special-left':'line-special-right'"></div>
                     <!-- 登录方法 -->
                     <div class="logon-method">
-                        <!-- 账号登录表单 -->
+                        <!-- 账号登录 -->
                         <div class="account-form" v-show="accountForm">
                             <div class="account-content">
                                 <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules">
@@ -37,7 +37,7 @@
                             </div>
                             <p class="account-tips">温馨提示：<br/>只有登录才能使用一些有权限的功能哦!</p>
                         </div>
-                        <!-- 人脸登录表单 -->
+                        <!-- 人脸登录 -->
                         <div class="face-form" v-show="faceForm">
                             <div class="distinguish-box"></div>
                             <button>开启摄像头</button>
