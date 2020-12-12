@@ -1,16 +1,23 @@
 const NotFound = () => import(/* webpackChunkName: "NotFound" */'../components/NotFound.vue')
+
 const Blog = () => import(/* webpackChunkName: "Blog" */'../components/blog/Blog.vue')
 const ArticleList = () => import(/* webpackChunkName: "ArticleList" */'../components/blog/ArticleList.vue')
 const Article = () => import(/* webpackChunkName: "Article" */'../components/blog/Article.vue')
+
 const Logon = () => import(/* webpackChunkName: "Logon" */'../components/Logon.vue')
 const Register = () => import(/* webpackChunkName: "Register" */'../components/Register.vue')
 const ReSetPwd = () => import(/* webpackChunkName: "ReSetPwd" */'../components/ReSetPwd.vue')
+
 const PersonalCenter = () => import(/* webpackChunkName: "PersonalCenter" */'../components/PersonalCenter.vue')
 
 const Nav = () => import(/* webpackChunkName: "nav" */ '../components/nav/Nav.vue')
 const Link = () => import(/* webpackChunkName: "link" */ '../components/nav/Link.vue')
 
-const Home = () => import(/* webpackChunkName: "home" */ '../components//home/Home.vue')
+const Home = () => import(/* webpackChunkName: "home" */ '../components/home/Home.vue')
+
+const Analysis = () => import(/* webpackChunkName: "analysis" */ '../components/analysis/Analysis.vue')
+
+const Practical = () => import(/* webpackChunkName: "practical" */ '../components/practical/Practical.vue')
 
 Vue.use(VueRouter)
 
@@ -37,6 +44,8 @@ const routes = [
     ]
   },
   { path:'/home', component:Home },
+  { path:'/practical', component:Practical },
+  { path:'/analysis', component:Analysis },
 ]
 
 const router = new VueRouter({

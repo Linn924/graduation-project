@@ -5,8 +5,8 @@
             <span @click="changePath(item)">{{item.title}}</span>
             <div>
                 <i class="el-icon-date"><span>{{item.date | date}}</span></i>
-                <i class="el-icon-folder-opened"><span>{{item.sort_name}}</span></i>
-                <i class="el-icon-collection-tag"><span>{{item.technology_name}}</span></i>
+                <i class="el-icon-folder-opened"><span @click="clickSort(item)">{{item.sort_name}}</span></i>
+                <i class="el-icon-collection-tag"><span @click="clickLabel(item)">{{item.technology_name}}</span></i>
             </div>
             <p>{{item.introduce}}</p>
         </article>
@@ -37,23 +37,28 @@ export default {
         }
     },
     created() {
-        if(window.location.href.includes('/blog/articlelist?')){
+        if(window.location.href.includes('/blog/articlelist?sort')){
             let id = window.location.href.split("=")[2]
             this.getAboutSortData(id)
+        }else if(window.location.href.includes('/blog/articlelist?label')){
+            let id = window.location.href.split("=")[2]
+            this.getAboutLabelData(id)
         }else{
             this.getBlogData()
         }
     },
     watch:{
         $route(to,from){
-            if(to.fullPath.includes('/blog/articlelist?')){
+            if(to.fullPath.includes('/blog/articlelist?sort')){
                 let id = to.fullPath.split("=")[2]
                 this.getAboutSortData(id)
+            }else if(to.fullPath.includes('/blog/articlelist?label')){
+                let id = to.fullPath.split("=")[2]
+                this.getAboutLabelData(id)
             }
             if(to.fullPath === '/blog/articlelist'){
                 this.getBlogData()
             }
-            
         }
     },
     methods: {
@@ -91,13 +96,29 @@ export default {
             operationlogArr.push(operationlogForm)
             window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
-        //根据点击的分类标签id获取所有有关此分类的数据
+        //根据点击的分类id获取所有有关此分类的数据
         async getAboutSortData(id){
             const {data:res} = await this.axios.get('/getAboutSortData',{params:{id}})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
-            if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:10})
-            this.$message({message: `${res.data.length}条数据`,type: 'success',duration:1000,offset:10})
+            if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})
+            this.$message({message: `${res.data.length}条数据`,type: 'success',duration:1000,offset:5})
+        },
+        //根据点击的标签id获取所有有关此标签的数据
+        async getAboutLabelData(id){
+            const {data:res} = await this.axios.get('/getAboutLabelData',{params:{id}})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            this.blogList = res.data
+            if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})
+            this.$message({message: `${res.data.length}条数据`,type: 'success',duration:1000,offset:5})
+        },
+        //根据分类查询博客
+        clickSort(data){
+            this.$router.push(`/blog/articlelist?sort=${data.sort_name}&id=${data.sortId}`)
+        },
+        //根据标签查询博客
+        clickLabel(data){
+            this.$router.push(`/blog/articlelist?label=${data.technology_name}&id=${data.technologyId}`)
         }
     }
 }
@@ -118,7 +139,6 @@ export default {
             font-size: 28px;
             font-weight: 400;
             cursor: pointer;
-            transition: color .3s;
             &:hover{color: #2468F2;}
         }
         div{
@@ -126,6 +146,12 @@ export default {
             i{
                 margin-right: 10px;
                 span{margin-left: 5px;}
+                &:nth-child(2),&:nth-child(3){
+                    span{
+                        cursor: pointer;
+                        &:hover{color: #2468F2;}
+                    }
+                }
             }
         }
     }
