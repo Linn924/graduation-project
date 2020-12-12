@@ -14,6 +14,18 @@
                         <span>主页</span>
                     </router-link>
                 </li>
+                <li>
+                    <router-link to="/nav" >
+                        <i class="el-icon-s-promotion"></i>
+                        <span>导航</span>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link to="/home" >
+                        <i class="el-icon-s-custom"></i>
+                        <span>首页</span>
+                    </router-link>
+                </li>
             </nav>
             <div class="not-logon" v-show="!status">
                 <span>未登录，</span>

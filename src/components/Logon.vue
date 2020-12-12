@@ -99,6 +99,7 @@ export default {
                 window.sessionStorage.setItem('token',res.token)
                 window.sessionStorage.setItem('userForm',JSON.stringify(userFrom))
                 this.$router.push('/blog')
+                this.saveOperateLog()
             })
         },
         //账号登录
@@ -111,6 +112,16 @@ export default {
             this.faceForm = true
             this.accountForm = false
             this.$refs.loginFormRef.resetFields()
+        },
+        //操作日志
+        saveOperateLog(){
+            let operationlogArr = []
+            let operationlogForm = {
+                title:'欢迎您登录',
+                time:new Date()
+            }
+            operationlogArr.push(operationlogForm)
+            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         }
     }
 }

@@ -7,6 +7,11 @@ const Register = () => import(/* webpackChunkName: "Register" */'../components/R
 const ReSetPwd = () => import(/* webpackChunkName: "ReSetPwd" */'../components/ReSetPwd.vue')
 const PersonalCenter = () => import(/* webpackChunkName: "PersonalCenter" */'../components/PersonalCenter.vue')
 
+const Nav = () => import(/* webpackChunkName: "nav" */ '../components/nav/Nav.vue')
+const Link = () => import(/* webpackChunkName: "link" */ '../components/nav/Link.vue')
+
+const Home = () => import(/* webpackChunkName: "home" */ '../components//home/Home.vue')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -24,6 +29,14 @@ const routes = [
   { path:'/register', component:Register },
   { path:'/resetpwd', component:ReSetPwd },
   { path:'/personalcenter', component:PersonalCenter },
+  { path: '/nav',
+    redirect: '/nav/link', 
+    component:Nav,
+    children:[
+      { path:'/nav/link',component:Link}
+    ]
+  },
+  { path:'/home', component:Home },
 ]
 
 const router = new VueRouter({

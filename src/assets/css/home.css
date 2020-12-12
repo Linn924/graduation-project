@@ -1,0 +1,185 @@
+@media screen and (max-width:461px){
+    #home>h1{font-size: 28px!important;}
+    #home>h1:hover{font-size: 34px!important;}
+    #home .search input{
+        width: 200px;
+        height: 32px;
+        border-radius: 16px;
+        font-size: 12px;
+    }
+    #home .search input.enlarge{animation: miniEnlarge .25s ease forwards!important;}
+    #home .search>input.narrow{animation: miniNarrow .25s ease forwards!important;}
+    @keyframes miniEnlarge{from{width: 200px;}to{width: 300px;}}
+    @keyframes miniNarrow{from{width: 300px;}to{width: 200px;}}
+    #home .searchOptBox span{
+        padding: 4px 16px;
+        border-radius: 11px;
+    }
+    #home .searchOptBox span .smallIcon{
+        width: 0.8em;
+        height: 0.8em;
+        vertical-align: 0.05em;
+    }
+    #home .keyWord{width: 300px!important;}
+    #home .motto span{font-size: 10px;}
+    #home .navBox{width: 300px!important;}
+    #home .navBox .navBoxOne{
+        min-width: 300px;
+        grid-template-columns: repeat(4,1fr);
+        grid-template-rows: repeat(5,1fr);
+        gap: 0 0;
+        place-items: center center;
+    }
+    #home .navBox .navBoxOne .foldNavCustom,
+    #home .navBox .navBoxOne .navCustomItem{
+        width: 50px;
+        height: 70px;
+    }
+    #home .navBox .navBoxOne .foldNavCustom{
+        padding: 0;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem{
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        gap: 0;
+        grid-template-rows: 16.6px 16.6px 16.6px;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem .navItem{
+        padding: 0!important;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem .navItem .iconMini{
+        width: 0.4em;
+        height: 0.4em;
+        vertical-align: 0.15em;
+    }
+    #home .navBox .navBoxOne .navCustomItem .navItem{
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+    }
+    #home .navBox .navBoxOne .navCustomItem span{
+        font-size: 8px;
+    }
+    #home .navBox .navBoxOne .navCustomItem .icon{
+        width: 1em;
+        height: 1em;
+    }
+    #home .navBox .navBoxOne .wallpaperNav,
+    #home .navBox .navBoxOne .addNav,
+    #home .navBoxSwitch,
+    #home .userAndset
+    {display: none!important;}
+}
+
+@media screen and (min-width:461px) and (max-width:600px){
+    #home>h1{font-size: 30px!important;}
+    #home>h1:hover{font-size: 36px!important;}
+    #home .search input{
+        width: 250px;
+        height: 36px;
+        border-radius: 18px;
+        font-size: 14px;
+    }
+    #home .search input.enlarge{animation: smallEnlarge .25s ease forwards!important;}
+    #home .search>input.narrow{animation: smallNarrow .25s ease forwards!important;}
+    @keyframes smallEnlarge{from{width: 250px;}to{width: 450px;}}
+    @keyframes smallNarrow{from{width: 450px;}to{width: 250px;}}
+    #home .searchOptBox span{
+        padding: 6px 20px;
+        border-radius: 15px;
+    }
+    #home .searchOptBox span .smallIcon{
+        width: 1em;
+        height: 1em;    
+    }
+    #home .navBox{width: 400px!important;}
+    #home .navBox .navBoxOne{
+        min-width: 400px;
+        max-height: 420px;
+        gap: 10px 5px;
+        place-items: center center;
+    }
+    #home .navBox .navBoxOne .foldNavCustom,
+    #home .navBox .navBoxOne .navCustomItem{
+        width: 60px;
+        height: 80px;
+    }
+    #home .navBox .navBoxOne .foldNavCustom{
+        padding: 0;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem{
+        width: 60px;
+        height: 60px;
+        border-radius: 5px;
+        gap: 0;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem .navItem{
+        padding: 0!important;
+    }
+    #home .navBox .navBoxOne .foldNavCustom .foldNavCustomItem .navItem .iconMini{
+        width: 0.6em;
+        height: 0.6em;
+        vertical-align: 0.15em;
+    }
+    #home .navBox .navBoxOne .navCustomItem .navItem{
+        width: 60px;
+        height: 60px;
+        border-radius: 5px;
+    }
+    #home .navBox .navBoxOne .navCustomItem span{
+        font-size: 10px;
+    }
+    #home .navBox .navBoxOne .navCustomItem .icon{
+        width: 1.3em;
+        height: 1.3em;
+    }
+    #home .keyWord{width: 450px!important;}
+    #home .navBox .navBoxOne .wallpaperNav,
+    #home .navBox .navBoxOne .addNav,
+    #home .navBoxSwitch,
+    #home .userAndset
+    {display: none!important;}
+}
+@media screen and (min-width:601px) and (max-width:760px){
+    #home>h1{font-size: 30px!important;}
+    #home>h1:hover{font-size: 36px!important;}
+    #home .search input{
+        width: 250px;
+        height: 36px;
+        border-radius: 18px;
+        font-size: 14px;
+    }
+    #home .search input.enlarge{animation: smallEnlarge .25s ease forwards!important;}
+    #home .search>input.narrow{animation: smallNarrow .25s ease forwards!important;}
+    @keyframes smallEnlarge{from{width: 250px;}to{width: 500px;}}
+    @keyframes smallNarrow{from{width: 500px;}to{width: 250px;}}
+    #home .searchOptBox span{
+        padding: 6px 20px;
+        border-radius: 15px;
+    }
+    #home .searchOptBox span .smallIcon{
+        width: 1em;
+        height: 1em;    
+    }
+    #home .navBox{width: 520px!important;}
+    #home .navBox .navBoxOne{
+        min-width: 520px;
+        gap: 20px 10px;
+        place-items: center center;
+    }
+    #home .keyWord{width: 500px!important;}
+    #home .navBox .navBoxOne .wallpaperNav,
+    #home .navBox .navBoxOne .addNav,
+    #home .navBoxSwitch,
+    #home .userAndset
+    {display: none!important;}
+    
+}
+@media screen and (min-width:761px) and (max-width:1260px){
+    #home .navBox .navBoxOne .wallpaperNav,
+    #home .navBox .navBoxOne .addNav,
+    #home .navBoxSwitch,
+    #home .userAndset
+    {display: none!important;}
+}

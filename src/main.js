@@ -2,6 +2,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import NProgress from 'nprogress'
+import { VueJsonp } from 'vue-jsonp'
 import 'nprogress/nprogress.css'
 import './assets/css/global.css'
 import './assets/css/atom-one-dark.css'
@@ -22,6 +23,7 @@ axios.interceptors.response.use(config => {
 
 Vue.prototype.axios = axios
 Vue.config.productionTip = false
+Vue.use(VueJsonp)
 
 //解决路由跳转报错（Avoided redundant navigation to current location ）
 const originalPush = VueRouter.prototype.push

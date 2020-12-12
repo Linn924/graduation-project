@@ -76,6 +76,20 @@ export default {
         changePath(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
+            if(window.sessionStorage.token){
+                this.saveOperateLog(item.title)
+            }
+        },
+        //操作日志
+        saveOperateLog(content){
+            let str = window.sessionStorage.getItem('operationlogArr')
+            let operationlogArr = str == null ? [] : JSON.parse(str)
+            let operationlogForm = {
+                title:`您浏览了${content}这篇文章`,
+                time:new Date()
+            }
+            operationlogArr.push(operationlogForm)
+            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
         //根据点击的分类标签id获取所有有关此分类的数据
         async getAboutSortData(id){
@@ -94,7 +108,7 @@ export default {
     width: 100%;
     article{
         background-color: rgba(255, 255, 255, 0.4);
-        border-radius: 8px;
+        border-radius: 3px;
         box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
         margin-bottom: 10px;
         padding: 20px 20px;

@@ -28,7 +28,7 @@
                             <img :src="userForm.avatar" alt="">
                             <div>
                                 <input type="file" accept="image/*" @change="uploadFile" ref="uploadImg" v-show="false"/>
-                                <span @click="$refs.uploadImg.click()">修改</span>
+                                <span @click="$refs.uploadImg.click()">修改头像</span>
                             </div>
                         </div>
                         <div class="basic-data-item">
@@ -45,6 +45,10 @@
                             <span :class="isSuccessEmail?'tips success-message':'tips fail-message'" 
                                 v-show="tipsEmail">{{tipsEmail}}</span>
                         </div>
+                        <div class="resetpwd">
+                            <span>密码：</span>
+                            <router-link to="/resetpwd">修改密码</router-link>
+                        </div>
                         <button class="button" @click="reviseInformation">提交</button>
                     </div>
                     <div class="fixed-data">
@@ -58,11 +62,24 @@
                 </div>
                 <!-- 评论文章 -->
                 <div class="comment-article" v-show="currentIndex == 1">
-                    评论文章
+                    <!-- 博客区域 -->
+                    <article v-for="item in blogList" :key="item.id">
+                        <span @click="changePath(item)">{{item.title}}</span>
+                        <div>
+                            <i class="el-icon-date"><span>{{item.date | date}}</span></i>
+                        </div>
+                        <p>{{item.introduce}}</p>
+                    </article>
                 </div>
                 <!-- 操作日志 -->
-                <div class="fabulous-article" v-show="currentIndex == 2">
-                    操作日志
+                <div class="operation-log" v-show="currentIndex == 2">
+                    <el-timeline :reverse="true">
+                        <el-timeline-item v-for="(item,index) in operationlogArr" :key="index" :timestamp="item.time" placement="top">
+                            <el-card>
+                                <h4>{{item.title}}</h4>
+                            </el-card>
+                        </el-timeline-item>
+                    </el-timeline>
                 </div>
             </div>
         </main>
@@ -102,15 +119,32 @@ export default {
             timerEmail:null,//邮箱定时器
             isSuccessUname:false,//用户名验证信息是否正确
             isSuccessEmail:false,//邮箱验证信息是否正确
+            blogList:[],//当前用户评论的所有博客
+            operationlogArr:[]
         }
     },
     created(){
         this.getUserData()
+        this.getAllBlogOfUser()
     },
     methods:{
+        //处理时间格式
+        dealDate(time){
+            const t = new Date(time)
+            const y = t.getFullYear()
+            const m = (t.getMonth() + 1 + '').padStart(2, '0')
+            const d = (t.getDate() + '').padStart(2, '0')
+            const hh = (t.getHours() + '').padStart(2, '0')
+            const mm = (t.getMinutes() + '').padStart(2, '0')
+            const ss = (t.getSeconds() + '').padStart(2, '0')
+            return `${y}/${m}/${d} ${hh}:${mm}:${ss}`
+        },
         //切换导航
         switchNav(id){
             this.currentIndex = id
+            if(id == 2){
+                this.getOperateLog()
+            }
         },
         //获取用户个人信息
         getUserData(){
@@ -202,6 +236,37 @@ export default {
             this.userForm.avatar = res.data
             this.updateSessionStorage()
             this.reload()
+        },
+        //获取用户评论过的所有博客信息
+        async getAllBlogOfUser(){
+            const {data:res} = await this.axios.get(`allCommentBlog/${this.userForm.id}`)
+            if(res.code !== 200) return new Error()
+            this.blogList = res.data
+        },
+        //进入相应的博客
+        changePath(item){
+            this.$store.commit('setMdname',item.mdname)
+            this.$router.push({path:`/blog/article?${item.mdname}`})
+            if(window.sessionStorage.token){
+                this.saveOperateLog(item.title)
+            }
+        },
+        //操作日志
+        saveOperateLog(content){
+            let str = window.sessionStorage.getItem('operationlogArr')
+            let operationlogArr = str == null ? [] : JSON.parse(str)
+            let operationlogForm = {
+                title:`您浏览了${content}这篇文章`,
+                time:new Date()
+            }
+            operationlogArr.push(operationlogForm)
+            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+        },
+        //获取操作日志
+        getOperateLog(){
+            let str = window.sessionStorage.getItem('operationlogArr')
+            this.operationlogArr = JSON.parse(str)
+            this.operationlogArr.forEach(item => item.time = this.dealDate(item.time))
         }
     },
     
@@ -211,8 +276,7 @@ export default {
 <style lang="less" scoped>
 .personal-center{
     width: 100vw;
-    min-height: 100vh;
-    background-color: #F5F5F5;
+    height: 100vh;
 }
 main{
     box-sizing: border-box;
@@ -228,8 +292,8 @@ main{
     background-color: #fff;
     box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
     box-sizing: border-box;
-    border-radius: 8px;
-    height: 400px;
+    border-radius: 3px;
+    height: 425px;
     nav{
         list-style: none;
         box-sizing: border-box;
@@ -257,11 +321,14 @@ main{
     }
 }
 .main-right{
+    max-height: 425px;
     background-color: #fff;
     box-shadow: 0 10px 20px 0px rgba(0, 0, 0, .05);
     box-sizing: border-box;
-    border-radius: 8px;
+    border-radius: 3px;
     padding: 50px;
+    overflow: hidden;
+    &:hover{overflow-y: auto;}
 }
 .changeColor{
     color: #2468F2!important;
@@ -314,6 +381,13 @@ main{
                 font-size: 12px;
             }
         }
+        .resetpwd{
+            a{
+                color: #2468F2;
+                font-size: 14px;
+                &:hover{text-decoration: underline;}  
+            }
+        }
     }
     .fixed-data{
         box-sizing: border-box;
@@ -347,7 +421,7 @@ main{
     cursor: pointer;
     border-radius: 4px;
     font-size: 14px;
-    margin-top: 50px;
+    margin-top: 30px;
     &:hover{opacity: 0.8;}
 }
 .success-message{
@@ -356,4 +430,36 @@ main{
 .fail-message{
     color:#F56C6C!important;
 }
+.comment-article{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    article{
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
+        border: 1px solid #ebeef5;
+        margin-bottom: 10px;
+        padding: 20px 20px;
+        border-radius: 3px;
+        box-sizing: border-box;
+        color: #000;
+        >span{
+            font-size: 28px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: color .3s;
+            &:hover{color: #2468F2;}
+        }
+        div{
+            margin: 20px 0;
+            i{
+                margin-right: 10px;
+                span{margin-left: 5px;}
+            }
+        }
+    }
+}
+.main-right::-webkit-scrollbar {width: 6px;}
+.main-right::-webkit-scrollbar-thumb {background-color: #ddd;border-radius: 3px;}
+.main-right::-webkit-scrollbar-track{background-color: #fff;}
 </style>

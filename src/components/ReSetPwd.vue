@@ -38,7 +38,7 @@
                         </el-form>
                     </div>
                     <div class="step3" v-show="active == 3">
-                        重置成功，请<router-link to="/logon">登录</router-link>
+                        重置成功，请重新<router-link to="/logon">登录</router-link>
                     </div>
                 </div>
                 <div class="button" v-show="active < 3">

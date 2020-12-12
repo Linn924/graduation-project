@@ -150,6 +150,20 @@ export default {
         changePath(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
+            if(window.sessionStorage.token){
+                this.saveOperateLog(item.title)
+            }
+        },
+        //操作日志
+        saveOperateLog(content){
+            let str = window.sessionStorage.getItem('operationlogArr')
+            let operationlogArr = str == null ? [] : JSON.parse(str)
+            let operationlogForm = {
+                title:`您浏览了${content}这篇文章`,
+                time:new Date()
+            }
+            operationlogArr.push(operationlogForm)
+            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
         //跳转路由
         clickSort(data){
@@ -196,7 +210,7 @@ export default {
             min-height: 330px;
             padding: 20px 0 0 0;
             background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             >header{
                 display: flex;
@@ -254,7 +268,7 @@ export default {
         .search{
             min-height: 100px;
             background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             box-sizing: border-box;
             padding: 10px 10px;
@@ -265,7 +279,7 @@ export default {
             min-height: 160px;
             margin-top: 10px;
             background-color: rgba(255, 255, 255, 0.4);
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             box-sizing: border-box;
             padding: 10px 10px;
@@ -295,7 +309,7 @@ export default {
         }
         article{
             background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             box-sizing: border-box;
             padding: 10px 10px;
@@ -318,7 +332,7 @@ export default {
         }
         .link{
             background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 8px;
+            border-radius: 3px;
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             box-sizing: border-box;
             padding: 10px 10px;

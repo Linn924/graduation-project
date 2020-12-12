@@ -137,6 +137,7 @@ export default {
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             }
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.saveOperateLog(this.commentForm.content)
             this.reload()
         },
         //点赞
@@ -206,7 +207,18 @@ export default {
             }
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
             this.getBlogComment(window.sessionStorage.getItem('blog_id'))
-        }
+        },
+        //操作日志
+        saveOperateLog(content){
+            let str = window.sessionStorage.getItem('operationlogArr')
+            let operationlogArr = str == null ? [] : JSON.parse(str)
+            let operationlogForm = {
+                title:`您评论了${content}`,
+                time:new Date()
+            }
+            operationlogArr.push(operationlogForm)
+            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+        },
     }
 }
 </script>
