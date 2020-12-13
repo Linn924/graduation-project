@@ -83,6 +83,7 @@ export default {
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(window.sessionStorage.token){
                 this.saveOperateLog(item.title)
+                this.addPageviews(item)
             }
         },
         //操作日志
@@ -95,6 +96,15 @@ export default {
             }
             operationlogArr.push(operationlogForm)
             window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+        },
+        //增加浏览量
+        async addPageviews(data){
+            let blogForm = {
+                blog_id:data.id,
+                pageviews:data.pageviews + 1
+            }
+            const {data:res} = await this.axios.put('addPageviews',blogForm)
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
         },
         //根据点击的分类id获取所有有关此分类的数据
         async getAboutSortData(id){
