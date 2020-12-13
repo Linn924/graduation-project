@@ -178,8 +178,10 @@ export default {
             }
             let commentForm = {
                 id:data.id,
+                linked_id:data.user_id,
                 agree_count:agree_count,
-                agree_user_id:agree_user_id
+                agree_user_id:agree_user_id,
+                praised:this.agreeArr[index].status? data.praised + 1 : data.praised - 1
             }
             return commentForm
         },
