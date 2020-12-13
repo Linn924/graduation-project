@@ -192,47 +192,47 @@ header{
         }
     }
     .person-box{
-    position: absolute;
-    top: 5px;
-    right: 80px;
-    z-index: 999;
-    width: 100px;
-    height: 50px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-    border-radius: 5px;
-    &::before{
-        content: "";
         position: absolute;
-        top: 20px;
-        left:-10px;
-        width: 0;
-        height: 0;
-        border-width:6px 10px 6px 0;
-        border-style: solid;
-        border-color: transparent #2468F2 transparent transparent;
+        top: 50px;
+        right: 190px;
+        z-index: 999;
+        width: 100px;
+        height: 50px;
+        background-color: #fff;
         box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-    }
-    div{
-        flex: 1;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
+        font-size: 14px;
         border-radius: 5px;
-        cursor: pointer;
-        &:hover{color: #2468F2;}
-    }
-    div:first-child{
-        border-bottom: 1px solid #ccc;
-        a{
-            color: #000;
+        &::before{
+            content: "";
+            position: absolute;
+            top: -10px;
+            left:40px;
+            width: 0;
+            height: 0;
+            border-width:0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #2468F2 transparent;
+            box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
+        }
+        div{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
             &:hover{color: #2468F2;}
         }
+        div:first-child{
+            border-bottom: 1px solid #ccc;
+            a{
+                color: #000;
+                &:hover{color: #2468F2;}
+            }
+        }
     }
-}
     section:last-child{
         width: 80vw;
         margin: 0 auto;
