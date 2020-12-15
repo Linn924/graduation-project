@@ -3,7 +3,7 @@
         <!-- 博客 -->
         <article v-html="html" v-highlight class="markdown-body md"></article>
         <!-- 评论 -->
-        <Comment :commentList="commentList" :id="blog_id" :getBlogComment="getBlogComment"></Comment>
+        <Comment :commentList="commentList" :id="blog_id" :getComments="getComments"></Comment>
     </div>
 </template>
 
@@ -23,15 +23,15 @@ export default {
     },
     watch: {
         $route(to,from){//路由变化再次调用方法
-            this.getmd()
+            this.getContent()
         }
     },
     created() {
-        this.getmd()
+        this.getContent()
     },
     methods: {
         //获取md文档博客数据
-        async getmd(){
+        async getContent(){
             var converter = new showdown.Converter()
             var url = window.location.href;
             var mdname = url.split("?")[1];
@@ -40,16 +40,16 @@ export default {
             this.html = converter.makeHtml(res.data[0].content)
             window.sessionStorage.setItem('blog_id',res.data[0].id)
             this.blog_id = res.data[0].id
-            this.getBlogComment(this.blog_id)
+            this.getComments(this.blog_id)
         },
         //根据当前博客id获取所有与当前博客相关的评论
-        async getBlogComment(id){
+        async getComments(id){
             const {data:res} = await this.axios.get(`comments/${id}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
-            this.dealCommentData(res)
+            this.dealComments(res)
         },
         //处理获取到的与博客相关的评论
-        dealCommentData(res){
+        dealComments(res){
             res.data.forEach((item,index) => {
                 let arr = []
                 res.data2.forEach(i => {

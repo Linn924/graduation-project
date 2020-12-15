@@ -5,6 +5,7 @@
         <section>
             <h1>Retrieve Password</h1>
             <div class="retrieve-pwd">
+                <!-- 步骤条 -->
                 <div class="step">
                     <el-steps :active="active" simple>
                         <el-step title="身份验证" icon="el-icon-s-custom"></el-step>
@@ -12,6 +13,7 @@
                         <el-step title="重置完成" icon="el-icon-check"></el-step>
                     </el-steps>
                 </div>
+                <!-- 所有步骤 -->
                 <div class="validate-process">
                     <div class="step1" v-show="active == 1">
                         <el-form ref="validateFormOneRef" :model="validateFormOne" :rules="validateRulesOne">
@@ -54,7 +56,7 @@
 export default {
     data(){
         // 验证邮箱的规则
-        var checkEmail = (rule, value, cb) => {
+        let checkEmail = (rule, value, cb) => {
             // 验证邮箱的正则表达式
             const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
             if (regEmail.test(value)) {
@@ -64,14 +66,14 @@ export default {
             cb(new Error('请输入合法的邮箱'))
         }
         // 确认密码规则
-        var checkpwd = (rule, value, cb) => {
+        let checkpwd = (rule, value, cb) => {
             if (this.validateFormTwo.password === this.validateFormTwo.checkpwd) {   
                 return cb()
             }
             cb(new Error('两次密码不一致'))
         }
         return {
-            active: 1,
+            active: 1,//当前默认在setp1
             validateFormOne:{//验证表单(setp1)
                 username:'',
                 email:''
@@ -117,13 +119,8 @@ export default {
         next() {
             if(this.active === 1){
                 this.$refs.validateFormOneRef.validate( async valid => {
-                    if(!valid) return this.$message({message: `请按照规定进行身份验证`,type: 'error',duration:1000})
-                    const {data:res} = await this.axios.get('checkIdentity',{
-                        params:{
-                            username:this.validateFormOne.username,
-                            email:this.validateFormOne.email
-                        }
-                    })
+                    if(!valid) return
+                    const {data:res} = await this.axios.get('checkIdentity',{params:this.validateFormOne})
                     if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                     this.$message({message: `${res.tips}`,type: 'success',duration:1000})
                     this.validateFormTwo.username = this.validateFormOne.username
@@ -131,7 +128,7 @@ export default {
                 })
             }else if(this.active === 2){
                 this.$refs.validateFormTwoRef.validate( async valid => {
-                    if(!valid) return this.$message({message: `请按照规定设置新密码`,type: 'error',duration:1000})
+                    if(!valid) return
                     const {data:res} = await this.axios.put('password',this.validateFormTwo)
                     if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                     this.$message({message: `${res.tips}`,type: 'success',duration:1000})

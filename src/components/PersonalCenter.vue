@@ -20,14 +20,14 @@
                         <div class="basic-data-title">
                             <span>基本信息</span>
                             <div>
-                                <span v-show="disabled" @click="editInformation">编辑信息</span>
-                                <span v-show="!disabled" @click="cancelEditInformation">取消编辑</span>
+                                <span v-show="disabled" @click="editUsers">编辑信息</span>
+                                <span v-show="!disabled" @click="cancelEdit">取消编辑</span>
                             </div>
                         </div>
                         <div class="head-portrait">
                             <img :src="userForm.avatar" alt="">
                             <div>
-                                <input type="file" accept="image/*" @change="uploadFile" ref="uploadImg" v-show="false"/>
+                                <input type="file" accept="image/*" @change="uploadAvatar" ref="uploadImg" v-show="false"/>
                                 <span @click="$refs.uploadImg.click()">修改头像</span>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                             <span>密码：</span>
                             <router-link to="/resetpwd">修改密码</router-link>
                         </div>
-                        <button class="button" @click="reviseInformation">提交</button>
+                        <button class="button" @click="putUsers">提交</button>
                     </div>
                     <div class="fixed-data">
                         <div class="fixed-data-title">
@@ -64,7 +64,7 @@
                 <div class="comment-article" v-show="currentIndex == 1">
                     <!-- 博客区域 -->
                     <article v-for="item in blogList" :key="item.id">
-                        <span @click="changePath(item)">{{item.title}}</span>
+                        <span @click="readBlogs(item)">{{item.title}}</span>
                         <div>
                             <i class="el-icon-date"><span>{{item.date | date}}</span></i>
                         </div>
@@ -92,7 +92,7 @@ import Header from './Header.vue'
 import Footer from './Footer.vue'
 export default {
     inject:['reload'],//注入重载方法
-    components:{
+    components:{//私有组件
         Header,
         Footer
     },
@@ -120,12 +120,12 @@ export default {
             isSuccessUname:false,//用户名验证信息是否正确
             isSuccessEmail:false,//邮箱验证信息是否正确
             blogList:[],//当前用户评论的所有博客
-            operationlogArr:[]
+            operationlogArr:[],//操作日志
         }
     },
     created(){
-        this.getUserData()
-        this.getAllBlogOfUser()
+        this.getUserForm()
+        this.getBlogs()
     },
     methods:{
         //处理时间格式
@@ -142,48 +142,43 @@ export default {
         //切换导航
         switchNav(id){
             this.currentIndex = id
-            if(id == 2){
-                this.getOperateLog()
-            }
+            if(id == 2) this.getOperateLog()
         },
         //获取用户个人信息
-        getUserData(){
-            let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
-            if(userForm !== null){
+        getUserForm(){
+            let userForm = JSON.parse(sessionStorage.getItem('userForm'))
+            if(userForm){
                 this.userForm.username = userForm.username
                 this.userForm.email = userForm.email
                 this.userForm.logontime = userForm.logontime
                 this.userForm.id = userForm.id
                 this.userForm.avatar = userForm.avatar
             }
-            
         },
         //编辑个人信息
-        editInformation(){
+        editUsers(){
             this.disabled = false
-            this.$nextTick(() => {
-                this.$refs.uname.focus()
-            })
+            this.$nextTick(() => {this.$refs.uname.focus()})
         },
         //取消编辑
-        cancelEditInformation(){
+        cancelEdit(){
             this.disabled = true
-            this.getUserData()
+            this.getUserForm()
             this.tipsUname = ''
             this.tipsEmail = ''
         },
         //修改个人信息
-        async reviseInformation(){
+        async putUsers(){
             if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000,offset:5})
             if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000,offset:5})
             const {data:res} = await this.axios.put('users',this.userForm)
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.$message({message:`${res.tips}`,type:'success',duration:1000})
-            this.updateSessionStorage()
+            this.putStorage()
             this.reload()
         },
         //更新本地存储
-        updateSessionStorage(){
+        putStorage(){
             let userForm = {
                 id:this.userForm.id,
                 username:this.userForm.username,
@@ -191,7 +186,7 @@ export default {
                 logontime:this.userForm.logontime,
                 avatar:this.userForm.avatar
             }
-            window.sessionStorage.setItem('userForm',JSON.stringify(userForm))
+            sessionStorage.setItem('userForm',JSON.stringify(userForm))
         },
         //检查昵称是否可用
         checkName(){
@@ -199,8 +194,8 @@ export default {
             this.timerUname = setTimeout(async () => {
                 const {data:res} = await this.axios.get('checkName',{
                     params:{
-                        username:this.registerForm.username,
-                        status:this.registerForm.status
+                        username:this.userForm.username,
+                        status:this.userForm.status
                     }
                 })
                 if(res.code != 200) this.isSuccessUname = false
@@ -214,7 +209,7 @@ export default {
             this.timerEmail = setTimeout(() => {
                 const regEmail = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
                 if (regEmail.test(this.userForm.email)) {
-                    if(this.userForm.email === JSON.parse(window.sessionStorage.getItem('userForm')).email) {
+                    if(this.userForm.email === JSON.parse(sessionStorage.getItem('userForm')).email) {
                         this.tipsEmail = '未作出修改'
                         this.isSuccessEmail = false
                     }
@@ -230,7 +225,7 @@ export default {
             },500)
         },
         //上传头像
-        async uploadFile(e){
+        async uploadAvatar(e){
             let image = e.target.files[0] //获取图片文件
             let formData = new FormData()  // 创建form对象
             formData.append('image', image)  // 通过append向form对象添加数据
@@ -240,37 +235,37 @@ export default {
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
             this.userForm.avatar = res.data
-            this.updateSessionStorage()
+            this.putStorage()
             this.reload()
         },
         //获取用户评论过的所有博客信息
-        async getAllBlogOfUser(){
+        async getBlogs(){
             const {data:res} = await this.axios.get(`blogs/${this.userForm.id}`)
             if(res.code !== 200) return new Error()
             this.blogList = res.data
         },
         //进入相应的博客
-        changePath(item){
+        readBlogs(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
-            if(window.sessionStorage.token){
+            if(sessionStorage.token){
                 this.saveOperateLog(item.title)
             }
         },
         //操作日志
         saveOperateLog(content){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             let operationlogArr = str == null ? [] : JSON.parse(str)
             let operationlogForm = {
                 title:`您浏览了${content}这篇文章`,
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
         //获取操作日志
         getOperateLog(){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             this.operationlogArr = JSON.parse(str)
             this.operationlogArr.forEach(item => item.time = this.dealDate(item.time))
         }
@@ -453,7 +448,6 @@ main{
             font-size: 28px;
             font-weight: 400;
             cursor: pointer;
-            transition: color .3s;
             &:hover{color: #2468F2;}
         }
         div{

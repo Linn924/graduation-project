@@ -2,6 +2,7 @@
     <div class="analysis">
         <Header :isSearch="false"></Header>
         <main>
+            <!-- 博客浏览量榜单 -->
             <div class="main-left">
                 <div class="title">
                     <i class="el-icon-reading"><span>博客</span></i>
@@ -9,15 +10,16 @@
                 </div>
                 <div class="line"></div>
                 <table>
-                    <tr v-for="(item,index) in topBlogViews" :key="index">
-                        <td style="width:20px">{{index + 1}}</td>
-                        <td @click="changePath(item)">{{item.title}}</td>
+                    <tr v-for="(item,index) in blogList" :key="index">
+                        <td style="width:30px">{{index + 1}}</td>
+                        <td @click="readBlogs(item)">{{item.title}}</td>
                         <td style="width:170px" align="center">{{item.date | date}}</td>
                         <td style="width:80px" align="right">{{item.pageviews}}<span>浏览</span></td>
                     </tr>
                 </table>
                 <div id="echarts" style="width: 100%;height:350px;"></div>
             </div>
+            <!-- 用户评论点赞量榜单 -->
             <div class="main-right">
                 <div class="title">
                     <i class="el-icon-collection"><span>评论</span></i>
@@ -25,8 +27,8 @@
                 </div>
                 <div class="line"></div>
                 <table>
-                    <tr v-for="(item,index) in commentLeaderboard" :key="index">
-                        <td style="width:20px">{{index + 1}}</td>
+                    <tr v-for="(item,index) in commentList" :key="index">
+                        <td style="width:30px">{{index + 1}}</td>
                         <td>{{item.username}}：{{item.content}}</td>
                         <td style="width:170px" align="center">{{item.date | date}}</td>
                         <td style="width:60px" align="right">{{item.agree_count}}<span>点赞</span></td>
@@ -40,34 +42,34 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import Header from '../Header.vue'
 import Footer from '../Footer.vue'
 export default {
-    inject:['reload'],//注入重载方法
-    components:{
+    inject:['reload'],//注入重载
+    components:{//私有组件
         Header,
         Footer
     },
     data(){
         return {
-            commentLeaderboard:[],
-            topBlogViews:[]
+            commentList:[],//评论榜单
+            blogList:[]//博客榜单
         }
     },
     created(){
-        this.getCommentLeaderboard()
-        this.getTopBlogViews()
+        this.getCommentList()
+        this.getBlogList()
     },
     methods:{
-        async getCommentLeaderboard(){
+        //获取评论榜单
+        async getCommentList(){
             const {data:res} = await this.axios.get('commentList')
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
-            this.commentLeaderboard = res.data
-            this.dealCommentEchartsData(res.data2)
+            this.commentList = res.data
+            this.dealComments(res.data2)
         },
-        //处理echarts数据与本地数据合并
-        dealCommentEchartsData(data){
+        //处理echarts数据与实时数据合并
+        dealComments(data){
             let options = {
                 title: {
                     text: '统计分析用户得赞数'
@@ -102,16 +104,18 @@ export default {
                 }
                 options.series[0].data.push(obj)
             })
-            var myChart = echarts.init(document.getElementById('echarts2'))
+            let myChart = echarts.init(document.getElementById('echarts2'))
             myChart.setOption(options)
         },
-        async getTopBlogViews(){
+        //获取博客榜单
+        async getBlogList(){
             const {data:res} = await this.axios.get('blogList')
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
-            this.topBlogViews = res.data
-            this.dealBlogEchartsData(res.data)
+            this.blogList = res.data
+            this.dealBlogs(res.data)
         },
-        dealBlogEchartsData(data){
+        //处理echarts数据与实时数据合并
+        dealBlogs(data){
             let options = {
                 title: {
                     text: '统计分析博客浏览量'
@@ -146,11 +150,11 @@ export default {
                 }
                 options.series[0].data.push(obj)
             })
-            var myChart = echarts.init(document.getElementById('echarts'))
+            let myChart = echarts.init(document.getElementById('echarts'))
             myChart.setOption(options)
         },
         //监听要查看的博客地址
-        changePath(item){
+        readBlogs(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(window.sessionStorage.token){
@@ -169,14 +173,14 @@ export default {
         },
         //操作日志
         saveOperateLog(content){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             let operationlogArr = str == null ? [] : JSON.parse(str)
             let operationlogForm = {
                 title:`您浏览了${content}这篇文章`,
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
     }
 }

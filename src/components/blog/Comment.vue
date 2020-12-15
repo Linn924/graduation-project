@@ -13,7 +13,7 @@
             </div>
             <div class="part-two">
                 <span>140</span>
-                <button @click="submitComment">评论</button>
+                <button @click="postComments">评论</button>
             </div>
         </div>
         <div class="others-comment">
@@ -35,7 +35,7 @@
                     <div class="time">
                         <span>{{item.date | date}}</span>
                         <div class="operate">
-                            <span @click="agreeUser(item,index)" :class="agree[index].status?'changeColor':''">
+                            <span @click="putComments(item,index)" :class="agree[index].status?'changeColor':''">
                                 <i class="el-icon-thumb"></i>{{item.agree_count}}</span>
                             <span>|</span>
                             <span @click="showReplyBox(index)">回复</span>
@@ -46,7 +46,7 @@
                         <textarea maxlength=140 v-model="reply[index].content"></textarea>
                         <div>
                             <span>140</span>
-                            <button @click="replyUser(item,index)">回复</button>
+                            <button @click="replyComment(item,index)">回复</button>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ export default {
     props:{
         'commentList':Array,
         'id':Number,
-        'getBlogComment':Function
+        'getComments':Function
     },
     data(){
         return {
@@ -82,7 +82,7 @@ export default {
     },
     created(){
         let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
-        if(userForm !== null) {
+        if(userForm) {
             this.commentForm.user_id = userForm.id
             this.user_avatar = userForm.avatar
         }else{
@@ -124,7 +124,7 @@ export default {
             return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
         },
         //提交评论
-        async submitComment(){
+        async postComments(){
             if(!window.sessionStorage.token)  
             return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             if(this.commentForm.content.length === 0) 
@@ -141,7 +141,7 @@ export default {
             this.reload()
         },
         //点赞
-        async agreeUser(data,index){
+        async putComments(data,index){
             if(!window.sessionStorage.token) 
             return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             let commentForm = this.dealAgree(data,index)
@@ -151,7 +151,7 @@ export default {
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             }
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
-            this.getBlogComment(window.sessionStorage.getItem('blog_id'))
+            this.getComments(sessionStorage.getItem('blog_id'))
         },
         //处理点赞的逻辑代码
         dealAgree(data,index){
@@ -192,7 +192,7 @@ export default {
             this.replyArr[index].status = !this.replyArr[index].status
         },
         //回复
-        async replyUser(data,index){
+        async replyComment(data,index){
             let replyForm = {
                 blog_id:'',//博客id
                 commentator_id:'',//评论人ID
@@ -204,22 +204,20 @@ export default {
             replyForm.respondent_id = data.user_id
             replyForm.reply_content = this.replyArr[index].content.split(`回复${data.username}:`)[1]
             const {data:res} = await this.axios.post('replyComment',replyForm)
-            if(res.code != 200) {
-                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
-            }
+            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
-            this.getBlogComment(window.sessionStorage.getItem('blog_id'))
+            this.getComments(sessionStorage.getItem('blog_id'))
         },
         //操作日志
         saveOperateLog(content){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             let operationlogArr = str == null ? [] : JSON.parse(str)
             let operationlogForm = {
                 title:`您评论了${content}`,
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
     }
 }

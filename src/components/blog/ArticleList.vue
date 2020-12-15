@@ -2,7 +2,7 @@
     <div id="content">
         <!-- 博客区域 -->
         <article v-for="item in blogList" :key="item.id">
-            <span @click="changePath(item)">{{item.title}}</span>
+            <span @click="readBlogs(item)">{{item.title}}</span>
             <div>
                 <i class="el-icon-date"><span>{{item.date | date}}</span></i>
                 <i class="el-icon-folder-opened"><span @click="clickSort(item)">{{item.sort_name}}</span></i>
@@ -39,31 +39,31 @@ export default {
     created() {
         if(window.location.href.includes('/blog/articlelist?sort')){
             let id = window.location.href.split("=")[2]
-            this.getAboutSortData(id)
+            this.getBlogsBySort(id)
         }else if(window.location.href.includes('/blog/articlelist?label')){
             let id = window.location.href.split("=")[2]
-            this.getAboutLabelData(id)
+            this.getBlogsByLabel(id)
         }else{
-            this.getBlogData()
+            this.getBlogs()
         }
     },
     watch:{
         $route(to,from){
             if(to.fullPath.includes('/blog/articlelist?sort')){
                 let id = to.fullPath.split("=")[2]
-                this.getAboutSortData(id)
+                this.getBlogsBySort(id)
             }else if(to.fullPath.includes('/blog/articlelist?label')){
                 let id = to.fullPath.split("=")[2]
-                this.getAboutLabelData(id)
+                this.getBlogsByLabel(id)
             }
             if(to.fullPath === '/blog/articlelist'){
-                this.getBlogData()
+                this.getBlogs()
             }
         }
     },
     methods: {
         //获取博客数据
-        async getBlogData(){
+        async getBlogs(){
             this.queryList.key = this.$store.state.value 
             const {data:res} = await this.axios.get("blogs",{params:this.queryList})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
@@ -75,27 +75,27 @@ export default {
         //监听去往第几页
         handleCurrentChange(newNum) {
             this.queryList.pagenum = newNum
-            this.getBlogData()
+            this.getBlogs()
         },
         //监听要查看的博客地址
-        changePath(item){
+        readBlogs(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
-            if(window.sessionStorage.token){
+            if(sessionStorage.token){
                 this.saveOperateLog(item.title)
                 this.addPageviews(item)
             }
         },
         //操作日志
         saveOperateLog(content){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             let operationlogArr = str == null ? [] : JSON.parse(str)
             let operationlogForm = {
                 title:`您浏览了${content}这篇文章`,
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
         //增加浏览量
         async addPageviews(data){
@@ -107,20 +107,16 @@ export default {
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
         },
         //根据点击的分类id获取所有有关此分类的数据
-        async getAboutSortData(id){
+        async getBlogsBySort(id){
             const {data:res} = await this.axios.get('/blogsBySort',{params:{id}})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
-            if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})
-            this.$message({message: `${res.data.length}条数据`,type: 'success',duration:1000,offset:5})
         },
         //根据点击的标签id获取所有有关此标签的数据
-        async getAboutLabelData(id){
+        async getBlogsByLabel(id){
             const {data:res} = await this.axios.get('/blogsByLabel',{params:{id}})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
-            if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})
-            this.$message({message: `${res.data.length}条数据`,type: 'success',duration:1000,offset:5})
         },
         //根据分类查询博客
         clickSort(data){

@@ -1,8 +1,8 @@
 <template>
     <footer>
         <section>
-            <p>© 2020 - 2021 Simon 版权所有</p>
-            <p>苏ICP备20023864号</p>
+            <p>{{content1}}</p>
+            <p>{{content2}}</p>
         </section>
     </footer>
 </template>
@@ -11,7 +11,8 @@
 export default {
     data(){
         return {
-            
+            content1:'© 2020 - 2021 Simon 版权所有',
+            content2:'苏ICP备20023864号'
         }
     }
 }

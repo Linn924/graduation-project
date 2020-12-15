@@ -1,107 +1,72 @@
 <template>
     <header>
-        <!-- 大屏幕下的头部 -->
         <section>
+            <!-- 头像 -->
             <a href="javascript:void(0);">
                 <img src="https://s3.ax1x.com/2020/12/02/D5a7qK.jpg" alt="">
                 <span>Simon</span>
             </a>
+            <!-- 导航 -->
             <nav>
                 <li>
                     <router-link to="/blog/articlelist" 
-                        @click.native="isSearch?getBlogAgain():''">
+                        @click.native="isSearch?getBlogsAgain():''">
                         <i class="el-icon-s-home"></i>
                         <span>主页</span>
                     </router-link>
                 </li>
-                <li>
-                    <router-link to="/analysis">
-                        <i class="el-icon-s-data"></i>
-                        <span>分析</span>
-                    </router-link>
-                </li>
-                <li>
-                    <router-link to="/practical">
-                        <i class="el-icon-s-cooperation"></i>
-                        <span>实用</span>
-                    </router-link>
-                </li>
-                <li>
-                    <router-link to="/nav">
-                        <i class="el-icon-s-promotion"></i>
-                        <span>导航</span>
-                    </router-link>
-                </li>
-                <li>
-                    <router-link to="/home">
-                        <i class="el-icon-s-custom"></i>
-                        <span>首页</span>
+                <li v-for="item in navList" :key="item.id">
+                    <router-link :to="item.route">
+                        <i :class="item.className"></i>
+                        <span>{{item.name}}</span>
                     </router-link>
                 </li>
             </nav>
+            <!-- 未登录提示语 -->
             <div class="not-logon" v-show="!status">
                 <span>未登录，</span>
                 <router-link to="/logon">登录</router-link>
             </div>
+            <!-- 登录提示语 -->
             <div class="logon" v-show="status">
                 <span>欢迎您，</span>
-                <span @mouseenter="personBoxShow=true">
+                <span @mouseenter="personBoxShow = true" @mouseleave="personBoxShow = false">
                     {{username}}
                 </span>
+                <!-- 个人中心盒子 -->
+                <div class="person-box" @mouseenter="personBoxShow = true" 
+                    @mouseleave="personBoxShow = false" v-show="personBoxShow">
+                    <div class="person-center">
+                        <router-link to="/personalcenter">个人中心</router-link>
+                    </div>
+                    <div class="logout" @click="logout">
+                        <span>登出</span>
+                    </div>
+                </div>
             </div>
         </section>
-        <!-- 个人中心盒子 -->
-        <div class="person-box" @mouseenter="personBoxShow=true" 
-            @mouseleave="personBoxShow=false" v-show="personBoxShow">
-            <div class="person-center">
-                <router-link to="/personalcenter">个人中心</router-link>
-            </div>
-            <div class="logout" @click="logout">
-                <span>登出</span>
-            </div>
-        </div>
-        <!-- 小屏幕下的头部 -->
-        <section>
-            <img src="https://s3.ax1x.com/2020/12/02/D5a7qK.jpg" alt="">
-            <div class="icon">
-                <i class="el-icon-search"></i>
-                <el-dropdown placement="bottom-start" trigger="click">
-                    <span class="el-dropdown-link">
-                        <i class="el-icon-s-operation"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>
-                            <router-link to="/content" 
-                                @click.native="isSearch?getBlogAgain():''">
-                                <i class="el-icon-s-home" style="color:#000"></i>
-                                <span style="color:#000">home</span>
-                            </router-link>
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                            <router-link to="/me">
-                                <i class="el-icon-user-solid" style="color:#000"></i>
-                                <span style="color:#000">About</span>
-                            </router-link>
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </div>
-        </section>
+        
     </header>
 </template>
 
 <script>
 export default {
-    inject:['reload'],//注入重载方法
+    inject:['reload'],//重载方法
     props:{
-        'getBlogAgain':Function,
+        'getBlogsAgain':Function,
         'isSearch':Boolean,
     },
     data(){
         return {
-            username:'', //用户登录名称
+            username:'', //昵称
             status:false,//登录状态         
-            personBoxShow:false,//个人中心盒子隐藏 
+            personBoxShow:false,//控制个人中心盒子显隐 
+            navList:[//导航列表
+                {id:1,name:'分析',className:'el-icon-s-data',route:'/analysis'},
+                {id:2,name:'实用',className:'el-icon-s-cooperation',route:'/practical'},
+                {id:3,name:'导航',className:'el-icon-s-promotion',route:'/nav'},
+                {id:4,name:'首页',className:'el-icon-s-custom',route:'/home'}
+            ]
         }
     },
     created(){
@@ -110,16 +75,15 @@ export default {
     methods:{
         //登出
         logout(){
-            window.sessionStorage.clear()
+            sessionStorage.clear()
             this.reload()
             this.$router.push('/blog/articlelist')
         },
         //获取用户信息及状态
         getUserData(){
-            let userForm = JSON.parse(window.sessionStorage.getItem('userForm'))
-            if(userForm === null){
-                this.status = false
-            }else{
+            let userForm = JSON.parse(sessionStorage.getItem('userForm'))
+            if(!userForm) this.status = false
+            else{
                 this.username = userForm.username
                 this.status = true
             }   
@@ -136,7 +100,7 @@ header{
     display: flex;
     justify-content: center;
     align-items: center;
-    section:first-child{
+    section{
         width: 80vw;
         display: grid;
         grid-template-columns:140px 1fr auto;
@@ -167,7 +131,6 @@ header{
                 margin-right: 20px;
                 a{
                     color: #000;
-                    transition: color .5s;
                     &:hover{color: #2468F2!important;}
                     font-size: 15px;
                     >i{margin-right: 2px;}
@@ -185,16 +148,19 @@ header{
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            span:last-child{
+            span:nth-child(2){
                 color: #2468F2;
                 cursor: pointer;
             }
         }
     }
+}
+.logon{
+    position: relative;
     .person-box{
         position: absolute;
         top: 50px;
-        right: 190px;
+        right: 0;
         z-index: 999;
         width: 100px;
         height: 50px;
@@ -233,26 +199,6 @@ header{
             }
         }
     }
-    section:last-child{
-        width: 80vw;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        img{
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 20px;
-        }
-        .icon i{
-            font-size: 20px;
-            cursor: pointer;
-            transition: all .25s;
-            &:first-child{margin-right: 20px;}
-            &:hover{color: #2468F2;}
-        }
-    }
 }
 @media screen and (min-width:376px){
   header{
@@ -260,15 +206,5 @@ header{
       top: 0;
       z-index: 998;
     }
-}
-@media screen and (max-width: 600px) {
-  header section:first-child{
-    display: none!important;
-  }
-}
-@media screen and (min-width: 601px) {
-  header section:last-child{
-    display: none!important;
-  }
 }
 </style>

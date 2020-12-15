@@ -49,7 +49,7 @@
             <!-- 右侧修饰部分 -->
             <div class="main-right">
             </div>
-        </main>
+        </main> 
         <footer>
             <section>
                 <span>© 2020 - 2021 LinnCode 版权所有</span>
@@ -65,7 +65,7 @@ export default {
         return {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
-            loginForm:{//登录表单数据
+            loginForm:{//登录表单
                 username:'这奇妙无比光怪陆离',
                 password:'123456'
             },
@@ -96,8 +96,8 @@ export default {
                     avatar:res.avatar,
                     logontime:new Date()
                 }
-                window.sessionStorage.setItem('token',res.token)
-                window.sessionStorage.setItem('userForm',JSON.stringify(userFrom))
+                sessionStorage.setItem('token',res.token)
+                sessionStorage.setItem('userForm',JSON.stringify(userFrom))
                 this.$router.push('/blog')
                 this.saveOperateLog()
             })
@@ -121,7 +121,7 @@ export default {
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         }
     }
 }

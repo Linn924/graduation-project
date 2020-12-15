@@ -5,7 +5,7 @@
         <el-backtop><i class="el-icon-caret-top"></i></el-backtop>
         
         <!-- 头部 -->
-        <Header :getBlogAgain="getBlogAgain" :isSearch="isSearch" 
+        <Header :getBlogsAgain="getBlogsAgain" :isSearch="isSearch" 
                 :searchBox="searchBox">
         </Header>
 
@@ -75,7 +75,7 @@
                         <div class="line"></div>
                         <nav>
                             <li v-for="item in blogList" :key="item.id">
-                                <label @click="changePath(item)">
+                                <label @click="readBlogs(item)">
                                     {{item.title}}
                                 </label>
                             </li>
@@ -110,8 +110,8 @@ export default {
     },
     data(){
         return {
-            blogList:[],
-            total:0,
+            blogList:[],//博客数据
+            total:0,//博客总数
             sortCount:0,//分类总数
             sortList:[],//分类数据
             value:'',//搜索框数据
@@ -119,14 +119,14 @@ export default {
         }
     },
     created() {
-        this.getSTData()
-        this.getBlogAllData()
+        this.getSorts()
+        this.getRecentBlogs()
          //禁止鼠标右键点击
         document.oncontextmenu =  () => {event.returnValue = false}
     },
     methods: {
         //获取博客最近文章
-        async getBlogAllData(){
+        async getRecentBlogs(){
             const {data:res} = await this.axios.get('recentBlogs')
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.total = res.total
@@ -135,36 +135,36 @@ export default {
         //搜索框按回车搜索文章
         enter(){
             this.$store.commit("setValue",this.value)
-            this.$refs.article.getBlogData()
+            this.$refs.article.getBlogs()
             this.value = ''
             this.isSearch = true
         },
-        //获取分类与标签数据
-        async getSTData(){
+        //获取分类数据
+        async getSorts(){
             const {data:res} = await this.axios.get("sortsAndlabels")
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.sortList = res.data.data
             this.sortCount = this.sortList.length
         },
         //监听要查看的博客地址
-        changePath(item){
+        readBlogs(item){
             this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
-            if(window.sessionStorage.token){
+            if(sessionStorage.token){
                 this.saveOperateLog(item.title)
                 this.addPageviews(item)
             }
         },
         //操作日志
         saveOperateLog(content){
-            let str = window.sessionStorage.getItem('operationlogArr')
+            let str = sessionStorage.getItem('operationlogArr')
             let operationlogArr = str == null ? [] : JSON.parse(str)
             let operationlogForm = {
                 title:`您浏览了${content}这篇文章`,
                 time:new Date()
             }
             operationlogArr.push(operationlogForm)
-            window.sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
+            sessionStorage.setItem('operationlogArr',JSON.stringify(operationlogArr))
         },
         //增加浏览量
         async addPageviews(data){
@@ -180,8 +180,8 @@ export default {
             this.$router.push(`/blog/articlelist?sort=${data.sort_name}&id=${data.id}`)
         }, 
         //再次获取博客列表
-        getBlogAgain(){
-            this.$refs.article.getBlogData()
+        getBlogsAgain(){
+            this.$refs.article.getBlogs()
             this.isSearch = false
         }
     }
@@ -293,7 +293,6 @@ export default {
             box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
             box-sizing: border-box;
             padding: 10px 10px;
-            transition: all .5s;
             span>i{margin-right: 5px;}
             .line{border: 1px solid #2468F2;margin: 10px 0;}
             section{
@@ -310,7 +309,6 @@ export default {
                     font-size: 12px;
                     cursor: pointer;
                     outline: none;
-                    transition:all .2s;
                     &:nth-child(2n+1){background-color: rgba(112,161,225);}
                     &:nth-child(3n){background-color: rgba(46,204,113);}
                     &:hover{&:hover{opacity: 0.8;}}
@@ -324,7 +322,6 @@ export default {
             box-sizing: border-box;
             padding: 10px 10px;
             margin: 10px 0;
-            transition: all .5s;
             span>i{margin-right: 5px;}
             .line{border: 1px solid #2468F2;margin-top: 10px;}
             li{
@@ -334,7 +331,6 @@ export default {
                 font-size: 14px;
                 &:last-child{border: 0;}
                 label{
-                    transition: color .25s;
                     cursor: pointer;
                     &:hover{color:#2468F2;}
                 }
@@ -347,13 +343,11 @@ export default {
             box-sizing: border-box;
             padding: 10px 10px;
             margin: 10px 0;
-            transition: all .25s;
             span>i{margin-right: 5px;}
             .line{border: 1px solid #2468F2;margin: 10px 0;}
             nav{
                 a{
                     color: #000;
-                    transition: all .25s;
                     &:hover{color: #2468F2;}
                     &:last-child{margin: 0 0 0 10px;}
                 }

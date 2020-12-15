@@ -19,7 +19,7 @@
                         <div :class="accountForm?'line-special-left':'line-special-right'"></div>
                         <!-- 注册方法 -->
                         <div class="register-method">
-                            <!-- 账号注册表单 -->
+                            <!-- 账号注册 -->
                             <div class="account-form" v-show="accountForm">
                                 <div class="account-content">
                                     <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules">
@@ -46,7 +46,7 @@
                                     <p class="account-tips">温馨提示：请按照规定注册账号哦!</p>
                                 </div>
                             </div>
-                            <!-- 人脸注册表单 -->
+                            <!-- 人脸注册 -->
                             <div class="face-form" v-show="faceForm">
                                 <div class="distinguish-box"></div>
                                 <button>开启摄像头</button>
@@ -65,7 +65,7 @@
 export default {
     data(){
         // 验证邮箱的规则
-        var checkEmail = (rule, value, cb) => {
+        let checkEmail = (rule, value, cb) => {
             // 验证邮箱的正则表达式
             const regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/
             if (regEmail.test(value)) {
@@ -77,7 +77,7 @@ export default {
         return {
             accountForm:true,//显示账号注册
             faceForm:false,//隐藏人脸注册
-            registerForm:{//注册表单数据
+            registerForm:{//注册表单
                 username:'',
                 password:'',
                 email:'',
@@ -137,15 +137,16 @@ export default {
         },
         //注册
         async register(){
-            if(this.registerForm.username.trim() === '' || !this.isSuccess){
+            if(!this.registerForm.username.trim() || !this.isSuccess){
                 this.checkName()
-                return this.$message({message: `请按照规定注册账号`,type: 'error',duration:1000})
+                return 
             }
             this.$refs.registerFormRef.validate( async valid => {
-                if(!valid) return this.$message({message: `请按照规定注册账号`,type: 'error',duration:1000})
+                if(!valid) return
                 const {data:res} = await this.axios.post('register',this.registerForm)
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                this.$router.push('/logon')
             })
         },
         //账号注册

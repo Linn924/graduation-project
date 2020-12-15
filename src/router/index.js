@@ -23,7 +23,7 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: '*', component: NotFound },
-  { path:'/', redirect: '/logon' },
+  { path:'/', redirect: '/blog' },
   { path: '/blog', 
     redirect: '/blog/articlelist', 
     component: Blog,
@@ -51,6 +51,20 @@ const routes = [
 const router = new VueRouter({
   // mode: 'history',
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/blog/articlelist' || to.path === '/blog/article' || to.path === '/logon' || to.path === '/register' 
+      || to.path === '/resetpwd' || to.path === '/nav/link' || to.path === '/practical' || to.path === '/analysis')
+  {
+    next()
+  } else {
+    if (!window.sessionStorage.getItem('token')) {
+      next('/logon')
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

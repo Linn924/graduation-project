@@ -2,26 +2,10 @@
     <div class="practical">
         <Header :isSearch="false"></Header>
         <main>
-            <div>
+            <div v-for="n in 9" :key="n">
                 <span>输入内容自动生成头像</span>
                 <input type="text" v-model="value" placeholder="请输入内容">
                 <avatar :username="value" v-show="value"></avatar>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
-            </div>
-            <div>
             </div>
         </main>
         <Footer></Footer>
@@ -68,7 +52,7 @@ main>div{
     border-radius: 3px;
     width: 100%;
 }
-main>div:first-child{
+main>div{
     display: flex;
     flex-direction: column;
     align-items: center;
