@@ -45,7 +45,7 @@
             </div>
             <div class="logon" v-show="status">
                 <span>欢迎您，</span>
-                <span @mouseenter="personBoxShow=true" @mouseleave="personBoxShow=false">
+                <span @mouseenter="personBoxShow=true">
                     {{username}}
                 </span>
             </div>

@@ -33,7 +33,7 @@
                         </div>
                         <div class="basic-data-item">
                             <span>昵称：</span>
-                            <input class="input" ref="uname" type="text" @keyup="checkUname"
+                            <input class="input" ref="uname" type="text" @keyup="checkName"
                                 :disabled="disabled" v-model="userForm.username">
                             <span :class="isSuccessUname?'tips success-message':'tips fail-message'" 
                                 v-show="tipsUname">{{tipsUname}}</span>
@@ -176,8 +176,9 @@ export default {
         async reviseInformation(){
             if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000,offset:5})
             if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000,offset:5})
-            const {data:res} = await this.axios.put('reviseUinformation',this.userForm)
+            const {data:res} = await this.axios.put('users',this.userForm)
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000})
             this.updateSessionStorage()
             this.reload()
         },
@@ -193,10 +194,15 @@ export default {
             window.sessionStorage.setItem('userForm',JSON.stringify(userForm))
         },
         //检查昵称是否可用
-        checkUname(){
+        checkName(){
             clearTimeout(this.timerUname)
             this.timerUname = setTimeout(async () => {
-                const {data:res} = await this.axios.post('checkUname',this.userForm)
+                const {data:res} = await this.axios.get('checkName',{
+                    params:{
+                        username:this.registerForm.username,
+                        status:this.registerForm.status
+                    }
+                })
                 if(res.code != 200) this.isSuccessUname = false
                 else this.isSuccessUname = true
                 this.tipsUname = res.tips
@@ -230,7 +236,7 @@ export default {
             formData.append('image', image)  // 通过append向form对象添加数据
             formData.append('username',this.userForm.username)
             formData.append('avatar',this.userForm.avatar)
-            const {data:res} = await this.axios.post('uploadImg',formData)
+            const {data:res} = await this.axios.post('images',formData)
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
             this.userForm.avatar = res.data
@@ -239,7 +245,7 @@ export default {
         },
         //获取用户评论过的所有博客信息
         async getAllBlogOfUser(){
-            const {data:res} = await this.axios.get(`allCommentBlog/${this.userForm.id}`)
+            const {data:res} = await this.axios.get(`blogs/${this.userForm.id}`)
             if(res.code !== 200) return new Error()
             this.blogList = res.data
         },

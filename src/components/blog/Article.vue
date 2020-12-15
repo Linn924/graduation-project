@@ -35,7 +35,7 @@ export default {
             var converter = new showdown.Converter()
             var url = window.location.href;
             var mdname = url.split("?")[1];
-            const {data:res} = await this.axios.get(`readmd/${mdname}`)
+            const {data:res} = await this.axios.get(`content/${mdname}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
             this.html = converter.makeHtml(res.data[0].content)
             window.sessionStorage.setItem('blog_id',res.data[0].id)
@@ -44,7 +44,7 @@ export default {
         },
         //根据当前博客id获取所有与当前博客相关的评论
         async getBlogComment(id){
-            const {data:res} = await this.axios.get(`getAllComment/${id}`)
+            const {data:res} = await this.axios.get(`comments/${id}`)
             if(res.code != 200) return this.$message.error(`${res.tips}`)
             this.dealCommentData(res)
         },

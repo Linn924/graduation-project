@@ -65,7 +65,7 @@ export default {
         //获取博客数据
         async getBlogData(){
             this.queryList.key = this.$store.state.value 
-            const {data:res} = await this.axios.get("blogdata",{params:this.queryList})
+            const {data:res} = await this.axios.get("blogs",{params:this.queryList})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
             this.total = res.total
@@ -103,12 +103,12 @@ export default {
                 blog_id:data.id,
                 pageviews:data.pageviews + 1
             }
-            const {data:res} = await this.axios.put('addPageviews',blogForm)
+            const {data:res} = await this.axios.put('blogsPageview',blogForm)
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
         },
         //根据点击的分类id获取所有有关此分类的数据
         async getAboutSortData(id){
-            const {data:res} = await this.axios.get('/getAboutSortData',{params:{id}})
+            const {data:res} = await this.axios.get('/blogsBySort',{params:{id}})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
             if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})
@@ -116,7 +116,7 @@ export default {
         },
         //根据点击的标签id获取所有有关此标签的数据
         async getAboutLabelData(id){
-            const {data:res} = await this.axios.get('/getAboutLabelData',{params:{id}})
+            const {data:res} = await this.axios.get('/blogsByLabel',{params:{id}})
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.blogList = res.data
             if(res.data.length == 0) return this.$message({message: '暂无数据',type: 'error',duration:1000,offset:5})

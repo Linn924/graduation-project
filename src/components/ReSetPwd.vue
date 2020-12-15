@@ -118,7 +118,12 @@ export default {
             if(this.active === 1){
                 this.$refs.validateFormOneRef.validate( async valid => {
                     if(!valid) return this.$message({message: `请按照规定进行身份验证`,type: 'error',duration:1000})
-                    const {data:res} = await this.axios.post('checkUidentity',this.validateFormOne)
+                    const {data:res} = await this.axios.get('checkIdentity',{
+                        params:{
+                            username:this.validateFormOne.username,
+                            email:this.validateFormOne.email
+                        }
+                    })
                     if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                     this.$message({message: `${res.tips}`,type: 'success',duration:1000})
                     this.validateFormTwo.username = this.validateFormOne.username
@@ -127,7 +132,7 @@ export default {
             }else if(this.active === 2){
                 this.$refs.validateFormTwoRef.validate( async valid => {
                     if(!valid) return this.$message({message: `请按照规定设置新密码`,type: 'error',duration:1000})
-                    const {data:res} = await this.axios.put('resetpwd',this.validateFormTwo)
+                    const {data:res} = await this.axios.put('password',this.validateFormTwo)
                     if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                     this.$message({message: `${res.tips}`,type: 'success',duration:1000})
                     this.active++

@@ -228,7 +228,7 @@
                 <input type="text" placeholder="网址" 
                     ref="wangzhi" v-model="addNavForm.url">
                 <input type="text" placeholder="标题"
-                    v-model="addNavForm.title">
+                    v-model="addNavForm.name">
                 <button @click="addNav">添加</button>
             </div> 
 
@@ -247,7 +247,7 @@
                 <input type="text" placeholder="网址" 
                     v-model="updateNavForm.url">
                 <input type="text" placeholder="标题"
-                    v-model="updateNavForm.title">
+                    v-model="updateNavForm.name">
                 <button @click="updateNav">保存</button>
             </div> 
 
@@ -430,11 +430,11 @@ export default {
             isLoginBoxShow:false,//隐藏登录盒子
             token:null,//默认没有token值
             addNavForm:{//新增的nav值
-                title:'',
+                name:'',
                 url:''
             },
             updateNavForm:{//更新新增的nav
-                title:'',
+                name:'',
                 url:'',
                 id:''
             },
@@ -668,7 +668,7 @@ export default {
         },
         //获取NavList
         async getNav(){
-            const {data:res} = await this.axios.get('getHomePageNav')
+            const {data:res} = await this.axios.get('homeNavs')
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.navList = res.data
         },
@@ -695,7 +695,7 @@ export default {
             updateNavItem.style.top = e.pageY  + 'px'
             updateNavItem.style.left = e.pageX  + 'px'
             this.updateNavForm = {
-                title:data.title,
+                name:data.title,
                 url:data.url,
                 id:data.id
             }
@@ -716,25 +716,25 @@ export default {
         },
         //更新nav
         async updateNav(){
-            const {data:res} = await this.axios.put('putHomePageNav',this.updateNavForm)
+            const {data:res} = await this.axios.put('websites',this.updateNavForm)
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.$message({message:`${res.tips}`,type:'success',duration:1000})
             this.isUpdateNavItemShow = false
             this.updateNavForm = {
                 id:'',
-                title:'',
+                name:'',
                 url:''
             }
             this.getNav()
         },
         //添加nav
         async addNav(){
-            const {data:res} = await this.axios.post('postHomePageNav',this.addNavForm)
+            const {data:res} = await this.axios.post('websites',this.addNavForm)
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.$message({message:`${res.tips}`,type:'success',duration:1000})
             this.isAddNavItemShow = false
             this.addNavForm = {
-                title:'',
+                name:'',
                 url:''
             }
             this.getNav()
@@ -765,7 +765,7 @@ export default {
                 this.isHandleNavItemShow = false
                 return this.$message({message: '已取消删除',type: 'info',duration:1000})
             }
-            const {data:res} = await this.axios.delete('deleteHomePageNav',{params:{id:this.deleteNavId}})
+            const {data:res} = await this.axios.delete('websites',{params:{id:this.deleteNavId}})
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.$message({message:`${res.tips}`,type:'success',duration:1000})
             this.isHandleNavItemShow = false
@@ -912,7 +912,7 @@ export default {
         },
         //点击壁纸，获取壁纸数据
         async getWallpaper(){
-            const {data:res} = await this.axios.get('getHomePageWallpaper')
+            const {data:res} = await this.axios.get('wallpapers')
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.wallpaperList = res.data
             this.defaultImg = res.data[0].newurl
@@ -930,7 +930,7 @@ export default {
             let image = e.target.files[0] //获取图片文件
             let formData = new FormData()  // 创建form对象
             formData.append('image', image)  // 通过append向form对象添加数据
-            const {data:res} = await this.axios.post('postHomePageWallpaper',formData)
+            const {data:res} = await this.axios.post('wallpapers',formData)
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.$message({message: `${res.tips}`,type: 'success',duration:1000})
             this.getWallpaper()
@@ -954,7 +954,7 @@ export default {
         },
         //更新背景图片
         async updateWallpaper(url){
-            const {data:res} = await this.axios.put('putHomePageWallpaper',{newurl:url})
+            const {data:res} = await this.axios.put('wallpapers',{newurl:url})
             if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
             this.$message({message:`${res.tips}`,type:'success',duration:1000})
             this.getWallpaper()

@@ -61,7 +61,7 @@ export default {
     },
     methods:{
         async getCommentLeaderboard(){
-            const {data:res} = await this.axios.get('commentLeaderboard')
+            const {data:res} = await this.axios.get('commentList')
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             this.commentLeaderboard = res.data
             this.dealCommentEchartsData(res.data2)
@@ -106,7 +106,7 @@ export default {
             myChart.setOption(options)
         },
         async getTopBlogViews(){
-            const {data:res} = await this.axios.get('topBlogViews')
+            const {data:res} = await this.axios.get('blogList')
             if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
             this.topBlogViews = res.data
             this.dealBlogEchartsData(res.data)
@@ -164,7 +164,7 @@ export default {
                 blog_id:data.id,
                 pageviews:data.pageviews + 1
             }
-            const {data:res} = await this.axios.put('addPageviews',blogForm)
+            const {data:res} = await this.axios.put('blogsPageview',blogForm)
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
         },
         //操作日志

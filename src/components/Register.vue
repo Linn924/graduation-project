@@ -25,8 +25,8 @@
                                     <el-form ref="registerFormRef" :model="registerForm" :rules="registerRules">
                                         <el-form-item>
                                             <el-input v-model="registerForm.username" clearable prefix-icon="el-icon-user-solid" 
-                                                placeholder="请设置昵称" autofocus="true" @keyup.native="checkUname" 
-                                                :class="isSuccess?'':'fail'" @blur="checkUname"></el-input>
+                                                placeholder="请设置昵称" autofocus="true" @keyup.native="checkName" 
+                                                :class="isSuccess?'':'fail'" @blur="checkName"></el-input>
                                             <span class="check" :style="{color:validateForm.success?'#67C23A':'#F56C6C'}">
                                                 {{validateForm.value}}</span>
                                         </el-form-item>
@@ -115,10 +115,15 @@ export default {
     },
     methods:{
         //检查昵称是否可用
-        checkUname(){
+        checkName(){
             clearTimeout(this.timer)
             this.timer = setTimeout(async () => {
-                const {data:res} = await this.axios.post('checkUname',this.registerForm)
+                const {data:res} = await this.axios.get('checkName',{
+                    params:{
+                        username:this.registerForm.username,
+                        status:this.registerForm.status
+                    }
+                })
                 if(res.code != 200){
                     this.validateForm.success = false
                     this.isSuccess = false
@@ -133,7 +138,7 @@ export default {
         //注册
         async register(){
             if(this.registerForm.username.trim() === '' || !this.isSuccess){
-                this.checkUname()
+                this.checkName()
                 return this.$message({message: `请按照规定注册账号`,type: 'error',duration:1000})
             }
             this.$refs.registerFormRef.validate( async valid => {

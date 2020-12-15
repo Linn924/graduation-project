@@ -131,7 +131,7 @@ export default {
             return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
             this.commentForm.blog_id = this.id
             this.commentForm.date = this.dealDate(this.commentForm.date)
-            const {data:res} = await this.axios.post('addComment',this.commentForm)
+            const {data:res} = await this.axios.post('comments',this.commentForm)
             if(res.code != 200) {
                 this.commentForm.content = ''
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
@@ -145,7 +145,7 @@ export default {
             if(!window.sessionStorage.token) 
             return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             let commentForm = this.dealAgree(data,index)
-            const {data:res} = await this.axios.put('agreeComment',commentForm)
+            const {data:res} = await this.axios.put('comments',commentForm)
             if(res.code != 200) {
                 this.agreeArr[index].status = !this.agreeArr[index].status
                 return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})

@@ -127,7 +127,7 @@ export default {
     methods: {
         //获取博客最近文章
         async getBlogAllData(){
-            const {data:res} = await this.axios.get('blogAllData')
+            const {data:res} = await this.axios.get('recentBlogs')
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.total = res.total
             this.blogList = res.data
@@ -141,7 +141,7 @@ export default {
         },
         //获取分类与标签数据
         async getSTData(){
-            const {data:res} = await this.axios.get("blogdatadetail")
+            const {data:res} = await this.axios.get("sortsAndlabels")
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
             this.sortList = res.data.data
             this.sortCount = this.sortList.length
@@ -172,7 +172,7 @@ export default {
                 blog_id:data.id,
                 pageviews:data.pageviews + 1
             }
-            const {data:res} = await this.axios.put('addPageviews',blogForm)
+            const {data:res} = await this.axios.put('blogsPageview',blogForm)
             if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
         },
         //跳转路由

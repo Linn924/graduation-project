@@ -158,7 +158,7 @@ export default {
     methods: {
         //获取NavData数据
         async getNavData(){
-            const {data:res} = await this.axios.get('getnavdata')
+            const {data:res} = await this.axios.get('navs')
             if(res.data.code != 200) return this.$message.error('获取数据失败')
             this.NAVData = res.data.data.data
             this.pushData(this.NAVData.length)
