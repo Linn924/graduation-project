@@ -145,7 +145,7 @@ export default {
             }
             data.forEach(item => {
                 let obj = {
-                    value:200 + item.pageviews * 50,
+                    value:500 + item.pageviews * 10,
                     name:item.title
                 }
                 options.series[0].data.push(obj)

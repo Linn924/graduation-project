@@ -160,7 +160,7 @@ header{
     .person-box{
         position: absolute;
         top: 50px;
-        right: 0;
+        right: -30px;
         z-index: 999;
         width: 100px;
         height: 50px;

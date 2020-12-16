@@ -66,7 +66,7 @@ export default {
             accountForm:true,//显示账号登录
             faceForm:false,//隐藏人脸登录
             loginForm:{//登录表单
-                username:'这奇妙无比光怪陆离',
+                username:'test',
                 password:'123456'
             },
             loginRules:{//登录表单验证规则
@@ -86,7 +86,7 @@ export default {
         async logon(){
             this.$refs.loginFormRef.validate( async valid => {
                 if(!valid) return this.$message({message: '请输入用户名密码登录',type: 'error',duration:1000})
-                const {data:res} = await this.axios.get('login',{params:this.loginForm})
+                const {data:res} = await this.axios.get('users',{params:this.loginForm})
                 if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
                 this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:5})
                 let userFrom = {

@@ -5,9 +5,7 @@
         <el-backtop><i class="el-icon-caret-top"></i></el-backtop>
         
         <!-- 头部 -->
-        <Header :getBlogsAgain="getBlogsAgain" :isSearch="isSearch" 
-                :searchBox="searchBox">
-        </Header>
+        <Header :getBlogsAgain="getBlogsAgain" :isSearch="isSearch"></Header>
 
         <!-- 内容区域 -->
         <main>

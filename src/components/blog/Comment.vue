@@ -125,8 +125,10 @@ export default {
         },
         //提交评论
         async postComments(){
-            if(!window.sessionStorage.token)  
-            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            if(!sessionStorage.token) {
+                this.commentForm.content = ''
+                return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            } 
             if(this.commentForm.content.length === 0) 
             return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
             this.commentForm.blog_id = this.id
@@ -142,7 +144,7 @@ export default {
         },
         //点赞
         async putComments(data,index){
-            if(!window.sessionStorage.token) 
+            if(!sessionStorage.token) 
             return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             let commentForm = this.dealAgree(data,index)
             const {data:res} = await this.axios.put('comments',commentForm)
@@ -187,7 +189,7 @@ export default {
         },
         //显示回复盒子
         showReplyBox(index){
-            if(!window.sessionStorage.token) 
+            if(!sessionStorage.token) 
             return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
             this.replyArr[index].status = !this.replyArr[index].status
         },
