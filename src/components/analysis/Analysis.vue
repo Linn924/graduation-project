@@ -64,7 +64,7 @@ export default {
         //获取评论榜单
         async getCommentList(){
             const {data:res} = await this.axios.get('commentList')
-            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
             this.commentList = res.data
             this.dealComments(res.data2)
         },
@@ -110,7 +110,7 @@ export default {
         //获取博客榜单
         async getBlogList(){
             const {data:res} = await this.axios.get('blogList')
-            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
             this.blogList = res.data
             this.dealBlogs(res.data)
         },
@@ -155,7 +155,6 @@ export default {
         },
         //监听要查看的博客地址
         readBlogs(item){
-            this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(window.sessionStorage.token){
                 this.saveOperateLog(item.title)
@@ -169,7 +168,7 @@ export default {
                 pageviews:data.pageviews + 1
             }
             const {data:res} = await this.axios.put('blogsPageview',blogForm)
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
         },
         //操作日志
         saveOperateLog(content){

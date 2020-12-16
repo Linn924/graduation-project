@@ -169,11 +169,11 @@ export default {
         },
         //修改个人信息
         async putUsers(){
-            if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000,offset:5})
-            if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000,offset:5})
+            if(this.disabled) return this.$message({message:'未作出任何修改',type:'error',duration:1000,offset:80})
+            if(!this.isSuccessEmail && !this.isSuccessUname) return this.$message({message:'请按规定修改信息',type:'error',duration:1000,offset:80})
             const {data:res} = await this.axios.put('users',this.userForm)
-            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000})
-            this.$message({message:`${res.tips}`,type:'success',duration:1000})
+            if(res.code !== 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:80})
             this.putStorage()
             this.reload()
         },
@@ -232,8 +232,8 @@ export default {
             formData.append('username',this.userForm.username)
             formData.append('avatar',this.userForm.avatar)
             const {data:res} = await this.axios.post('images',formData)
-            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
-            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:80})
             this.userForm.avatar = res.data
             this.putStorage()
             this.reload()
@@ -246,7 +246,6 @@ export default {
         },
         //进入相应的博客
         readBlogs(item){
-            this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(sessionStorage.token){
                 this.saveOperateLog(item.title)

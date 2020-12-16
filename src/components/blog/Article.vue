@@ -32,20 +32,19 @@ export default {
     methods: {
         //获取md文档博客数据
         async getContent(){
-            var converter = new showdown.Converter()
-            var url = window.location.href;
-            var mdname = url.split("?")[1];
+            const converter = new showdown.Converter()
+            const mdname = location.href.split("?")[1]
             const {data:res} = await this.axios.get(`content/${mdname}`)
-            if(res.code != 200) return this.$message.error(`${res.tips}`)
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.html = converter.makeHtml(res.data[0].content)
-            window.sessionStorage.setItem('blog_id',res.data[0].id)
+            sessionStorage.setItem('blog_id',res.data[0].id)
             this.blog_id = res.data[0].id
             this.getComments(this.blog_id)
         },
         //根据当前博客id获取所有与当前博客相关的评论
         async getComments(id){
             const {data:res} = await this.axios.get(`comments/${id}`)
-            if(res.code != 200) return this.$message.error(`${res.tips}`)
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.dealComments(res)
         },
         //处理获取到的与博客相关的评论

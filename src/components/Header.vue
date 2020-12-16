@@ -9,7 +9,7 @@
             <!-- 导航 -->
             <nav>
                 <li>
-                    <router-link to="/blog/articlelist" 
+                    <router-link to="/blog/articlelist"
                         @click.native="isSearch?getBlogsAgain():''">
                         <i class="el-icon-s-home"></i>
                         <span>主页</span>
@@ -66,7 +66,7 @@ export default {
                 {id:2,name:'实用',className:'el-icon-s-cooperation',route:'/practical'},
                 {id:3,name:'导航',className:'el-icon-s-promotion',route:'/nav'},
                 {id:4,name:'首页',className:'el-icon-s-custom',route:'/home'}
-            ]
+            ],
         }
     },
     created(){
@@ -78,6 +78,7 @@ export default {
             sessionStorage.clear()
             this.reload()
             this.$router.push('/blog/articlelist')
+            this.$message({message:'登出成功',type: 'success',duration:1000,offset:80})
         },
         //获取用户信息及状态
         getUserData(){

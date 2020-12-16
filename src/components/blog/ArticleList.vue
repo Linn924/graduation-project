@@ -25,6 +25,9 @@
 
 <script>
 export default {
+    props:{
+        'value':String
+    },
     data(){
         return {
             blogList:[],//博客数据   
@@ -37,11 +40,11 @@ export default {
         }
     },
     created() {
-        if(window.location.href.includes('/blog/articlelist?sort')){
-            let id = window.location.href.split("=")[2]
+        if(location.href.includes('/blog/articlelist?sort')){
+            let id = location.href.split("=")[2]
             this.getBlogsBySort(id)
-        }else if(window.location.href.includes('/blog/articlelist?label')){
-            let id = window.location.href.split("=")[2]
+        }else if(location.href.includes('/blog/articlelist?label')){
+            let id = location.href.split("=")[2]
             this.getBlogsByLabel(id)
         }else{
             this.getBlogs()
@@ -64,13 +67,12 @@ export default {
     methods: {
         //获取博客数据
         async getBlogs(){
-            this.queryList.key = this.$store.state.value 
+            this.queryList.key = this.value
             const {data:res} = await this.axios.get("blogs",{params:this.queryList})
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.blogList = res.data
             this.total = res.total
             this.queryList.key = ''
-            this.$store.commit("setValueAgain")
         },
         //监听去往第几页
         handleCurrentChange(newNum) {
@@ -79,7 +81,6 @@ export default {
         },
         //监听要查看的博客地址
         readBlogs(item){
-            this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(sessionStorage.token){
                 this.saveOperateLog(item.title)
@@ -104,18 +105,18 @@ export default {
                 pageviews:data.pageviews + 1
             }
             const {data:res} = await this.axios.put('blogsPageview',blogForm)
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
         },
         //根据点击的分类id获取所有有关此分类的数据
         async getBlogsBySort(id){
             const {data:res} = await this.axios.get('/blogsBySort',{params:{id}})
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.blogList = res.data
         },
         //根据点击的标签id获取所有有关此标签的数据
         async getBlogsByLabel(id){
             const {data:res} = await this.axios.get('/blogsByLabel',{params:{id}})
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.blogList = res.data
         },
         //根据分类查询博客

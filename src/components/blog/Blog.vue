@@ -45,7 +45,7 @@
                     </div>
                 </aside>
                 <!-- 博客文章 -->
-                <router-view ref="article"></router-view>
+                <router-view ref="article" :value="value"></router-view>
                 <!--右侧边栏 -->
                 <aside class="aside-right">
                     <!-- 搜索区域 -->
@@ -79,15 +79,6 @@
                             </li>
                         </nav>
                     </article>                      
-                    <!-- 友情链接 -->
-                    <div class="link">
-                        <span><i class="el-icon-link"></i>个人链接</span>
-                        <div class="line"></div>
-                        <nav>
-                            <a href="http://home.linncode.cn" target="__blank">西蒙首页</a>
-                            <a href="http://nav.linncode.cn" target="__blank">西蒙导航</a>
-                        </nav>
-                    </div>
                 </aside>  
             </section>
         </main>
@@ -126,13 +117,12 @@ export default {
         //获取博客最近文章
         async getRecentBlogs(){
             const {data:res} = await this.axios.get('recentBlogs')
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.total = res.total
             this.blogList = res.data
         },
         //搜索框按回车搜索文章
         enter(){
-            this.$store.commit("setValue",this.value)
             this.$refs.article.getBlogs()
             this.value = ''
             this.isSearch = true
@@ -140,13 +130,12 @@ export default {
         //获取分类数据
         async getSorts(){
             const {data:res} = await this.axios.get("sortsAndlabels")
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
             this.sortList = res.data.data
             this.sortCount = this.sortList.length
         },
         //监听要查看的博客地址
         readBlogs(item){
-            this.$store.commit('setMdname',item.mdname)
             this.$router.push({path:`/blog/article?${item.mdname}`})
             if(sessionStorage.token){
                 this.saveOperateLog(item.title)
@@ -171,7 +160,7 @@ export default {
                 pageviews:data.pageviews + 1
             }
             const {data:res} = await this.axios.put('blogsPageview',blogForm)
-            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
+            if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
         },
         //跳转路由
         clickSort(data){
@@ -334,23 +323,6 @@ export default {
                 }
             }
         }
-        .link{
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 3px;
-            box-shadow: 0 2px 10px 0 rgba(0,0,0,0.12);
-            box-sizing: border-box;
-            padding: 10px 10px;
-            margin: 10px 0;
-            span>i{margin-right: 5px;}
-            .line{border: 1px solid #2468F2;margin: 10px 0;}
-            nav{
-                a{
-                    color: #000;
-                    &:hover{color: #2468F2;}
-                    &:last-child{margin: 0 0 0 10px;}
-                }
-            }
-        }
     }  
 }
 @media screen and (max-width: 1260px) {
@@ -396,10 +368,6 @@ export default {
   #blog>main aside:last-child article{
     position: sticky;
     top: 360px;
-  }
-  #blog>main aside:last-child .link{
-    position: sticky;
-    top: 578px;
   }
 }
 </style>

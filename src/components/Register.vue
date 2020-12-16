@@ -144,8 +144,8 @@ export default {
             this.$refs.registerFormRef.validate( async valid => {
                 if(!valid) return
                 const {data:res} = await this.axios.post('users',this.registerForm)
-                if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
-                this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
+                this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:80})
                 this.$router.push('/logon')
             })
         },

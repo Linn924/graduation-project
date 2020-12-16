@@ -121,8 +121,8 @@ export default {
                 this.$refs.validateFormOneRef.validate( async valid => {
                     if(!valid) return
                     const {data:res} = await this.axios.get('checkIdentity',{params:this.validateFormOne})
-                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
-                    this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
+                    this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:80})
                     this.validateFormTwo.username = this.validateFormOne.username
                     this.active++
                 })
@@ -130,8 +130,8 @@ export default {
                 this.$refs.validateFormTwoRef.validate( async valid => {
                     if(!valid) return
                     const {data:res} = await this.axios.put('password',this.validateFormTwo)
-                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000})
-                    this.$message({message: `${res.tips}`,type: 'success',duration:1000})
+                    if(res.code != 200) return this.$message({message: `${res.tips}`,type: 'error',duration:1000,offset:80})
+                    this.$message({message: `${res.tips}`,type: 'success',duration:1000,offset:80})
                     this.active++
                 })
             }

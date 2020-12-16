@@ -127,32 +127,32 @@ export default {
         async postComments(){
             if(!sessionStorage.token) {
                 this.commentForm.content = ''
-                return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+                return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:80})
             } 
             if(this.commentForm.content.length === 0) 
-            return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:5})
+            return this.$message({message:'您还没有评论',type:'error',duration:1000,offset:80})
             this.commentForm.blog_id = this.id
             this.commentForm.date = this.dealDate(this.commentForm.date)
             const {data:res} = await this.axios.post('comments',this.commentForm)
             if(res.code != 200) {
                 this.commentForm.content = ''
-                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
             }
-            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:80})
             this.saveOperateLog(this.commentForm.content)
             this.reload()
         },
         //点赞
         async putComments(data,index){
             if(!sessionStorage.token) 
-            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:80})
             let commentForm = this.dealAgree(data,index)
             const {data:res} = await this.axios.put('comments',commentForm)
             if(res.code != 200) {
                 this.agreeArr[index].status = !this.agreeArr[index].status
-                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
+                return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
             }
-            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:80})
             this.getComments(sessionStorage.getItem('blog_id'))
         },
         //处理点赞的逻辑代码
@@ -183,6 +183,7 @@ export default {
                 linked_id:data.user_id,
                 agree_count:agree_count,
                 agree_user_id:agree_user_id,
+                status:this.agreeArr[index].status,
                 praised:this.agreeArr[index].status? data.praised + 1 : data.praised - 1
             }
             return commentForm
@@ -190,7 +191,7 @@ export default {
         //显示回复盒子
         showReplyBox(index){
             if(!sessionStorage.token) 
-            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:5})
+            return this.$message({message:'您还没有登录，请点击右上角的登录链接',type:'error',duration:1000,offset:80})
             this.replyArr[index].status = !this.replyArr[index].status
         },
         //回复
@@ -206,8 +207,8 @@ export default {
             replyForm.respondent_id = data.user_id
             replyForm.reply_content = this.replyArr[index].content.split(`回复${data.username}:`)[1]
             const {data:res} = await this.axios.post('replyComment',replyForm)
-            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:5})
-            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:5})
+            if(res.code != 200) return this.$message({message:`${res.tips}`,type:'error',duration:1000,offset:80})
+            this.$message({message:`${res.tips}`,type:'success',duration:1000,offset:80})
             this.getComments(sessionStorage.getItem('blog_id'))
         },
         //操作日志
