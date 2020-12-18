@@ -454,7 +454,7 @@ export default {
         //获取nav数据
         this.getNav()
         //页面初始化获得token值
-        this.token = window.sessionStorage.getItem('token')
+        this.token = sessionStorage.getItem('token')
     },
     mounted(){
         //JSONP跨域实现自动补全搜索(关键词联想)
@@ -645,7 +645,7 @@ export default {
         // 搜索事件
         search(e){
             if(e.keyCode == 13){
-              window.open(this.searchEngines[this.browserIndex].path + this.inputValue)
+              open(this.searchEngines[this.browserIndex].path + this.inputValue)
               this.inputValue = ""
             }
             this.$jsonp(this.keyWordsApi[this.browserIndex].path + this.inputValue)
@@ -654,7 +654,7 @@ export default {
         },
         //打开网页
         clickKeyWords(url){
-            window.open(url)
+            open(url)
             this.inputValue = ''
             this.searchList = []
         },
@@ -774,12 +774,12 @@ export default {
         },
         //点击nav
         openWebsite(url){
-            window.open(url)
+            open(url)
         },
         //点击user模块
         clickUser(){
             this.isSetModuleShow = false
-            if(this.token == null){
+            if(!this.token){
                 this.isLoginBoxShow = true
             }else{
                 this.isUserModuleShow = true
@@ -807,7 +807,7 @@ export default {
         },
         //获取localStorage中的noteList数据
         getNoteList(){
-            let arr = JSON.parse(window.localStorage.getItem('noteList'))
+            let arr = JSON.parse(localStorage.getItem('noteList'))
             this.noteList = arr == null ? [] : arr
             if(this.noteList.length != 0){
                 this.isNoteListShow = true
@@ -844,7 +844,7 @@ export default {
             this.noteValue = ''
             if(this.noteList.length > 6) 
             return this.$message({message:'添加那么多便签能完成吗？',type:'error',duration:1000})
-            window.localStorage.setItem('noteList',JSON.stringify(this.noteList))
+            localStorage.setItem('noteList',JSON.stringify(this.noteList))
             this.$message({message:'添加便签成功',type:'success',duration:1000})
             this.getNoteList()
         },
@@ -857,7 +857,7 @@ export default {
                     return true
                 }
             })
-            window.localStorage.setItem('noteList',JSON.stringify(this.noteList))
+            localStorage.setItem('noteList',JSON.stringify(this.noteList))
             this.updateNoteItemIndex = -1
             this.noteItemIndex = -1
             this.isUpdateNote = false
@@ -870,10 +870,10 @@ export default {
             if(this.noteItemIndex == -1) return this.$message({message:'请选中要删除的便签',type:'error',duration:1000})
             let arr = this.noteList.filter(item => item.id != this.noteItemIndex)
             if(arr.length == 0){
-                 window.localStorage.clear()
+                 localStorage.clear()
                  this.noteItemIndex = -1
             }else{
-                window.localStorage.setItem('noteList',JSON.stringify(arr))
+                localStorage.setItem('noteList',JSON.stringify(arr))
             }
             this.noteValue = ''
             this.$message({message:'删除便签成功',type:'success',duration:1000})
@@ -889,7 +889,7 @@ export default {
                 }
             }
             this.$message({message:'钉住便签成功',type:'success',duration:1000})
-            window.localStorage.setItem('noteList',JSON.stringify(this.noteList))
+            localStorage.setItem('noteList',JSON.stringify(this.noteList))
             this.noteValue = ''
             this.noteItemIndex = -1
         },
@@ -902,7 +902,7 @@ export default {
                 }
             })
             this.$message({message:'取消钉住便签成功',type:'success',duration:1000})
-            window.localStorage.setItem('noteList',JSON.stringify(this.noteList))
+            localStorage.setItem('noteList',JSON.stringify(this.noteList))
         },
         //展示壁纸盒子
         showWallpaper(){
