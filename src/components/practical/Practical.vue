@@ -17,7 +17,7 @@ import Avatar from 'vue-avatar'
 import Header from '../Header.vue'
 import Footer from '../Footer.vue'
 export default {
-    inject:['reload'],//注入重载方法
+    inject:['reload'],
     components:{
         Header,
         Footer,
