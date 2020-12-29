@@ -39,7 +39,6 @@ Vue.directive('highlight', el => {
   })
 })
 
-//处理时间格式的过滤器
 Vue.filter('date', function (originVal) {
   const t = new Date(originVal)
   const y = t.getFullYear()
