@@ -31,7 +31,6 @@ VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err)
 }
 
-//代码高亮
 Vue.directive('highlight', el => {
   let blocks = el.querySelectorAll('pre code')
   blocks.forEach((block) => {
