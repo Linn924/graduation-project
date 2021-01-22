@@ -1,6 +1,6 @@
 <template>
     <div class="notfound">
-        404啊
+        404
     </div>
 </template>
 

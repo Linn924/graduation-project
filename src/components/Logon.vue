@@ -183,8 +183,6 @@ main{
         }
         
     }
-    .main-right{
-    }
 }
 footer{
     display: flex;
